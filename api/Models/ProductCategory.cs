@@ -15,6 +15,13 @@ public class ProductCategory
     [Required]
     [MaxLength(250)]
     public string CategoryDescription { get; set; }
+    
+    
+    public int SizeCategoryId { get; set; }
+    public SizeCategory SizeCategory { get; set; }
+    
     public int? ParentCategoryId { get; set; }
     public ProductCategory? ParentProductCategory { get; set; }
+    
+    public ICollection<Product> Products { get; set; }
 }
