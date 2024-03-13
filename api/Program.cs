@@ -1,9 +1,22 @@
-var builder = WebApplication.CreateBuilder(args);
+using api.Configurations;
+using api.Data;
+using Microsoft.EntityFrameworkCore;
 
-// Add services to the container.
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+var builder = WebApplication.CreateBuilder(args);
+     
+var dbConfig = new DatabaseConfig(); 
+builder.Configuration.GetSection("DatabaseConfig").Bind(dbConfig);
+
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+{
+    options.UseSqlServer(dbConfig.ConnectionString);
+    options.EnableDetailedErrors(dbConfig.DetailedErrors); // DetailedErrors is true in development
+    options.EnableSensitiveDataLogging(dbConfig.SensitiveDataLogging); // SensitiveDataLogging is true in development
+});
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddControllers();
 
 var app = builder.Build();
 
