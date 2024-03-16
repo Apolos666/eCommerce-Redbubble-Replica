@@ -1,5 +1,6 @@
 using api.Configurations;
 using api.Data;
+using api.Repositories.ProductCategory;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -13,10 +14,13 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.EnableDetailedErrors(dbConfig.DetailedErrors); // DetailedErrors is true in development
     options.EnableSensitiveDataLogging(dbConfig.SensitiveDataLogging); // SensitiveDataLogging is true in development
 });
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddControllers();
+
+builder.Services.AddScoped<IProductCategoryRepository, ProductCategoryRepository>();
 
 var app = builder.Build();
 
