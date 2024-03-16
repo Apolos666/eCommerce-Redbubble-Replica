@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore;
 
 namespace DefaultNamespace;
 
@@ -15,7 +16,6 @@ public class ProductCategory
     [Required]
     [MaxLength(250)]
     public string CategoryDescription { get; set; }
-    
     
     public int SizeCategoryId { get; set; }
     public SizeCategory SizeCategory { get; set; }

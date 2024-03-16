@@ -12,8 +12,8 @@ using api.Data;
 namespace api.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240313172321_Add precision to decimal price in ProductItem")]
-    partial class AddprecisiontodecimalpriceinProductItem
+    [Migration("20240316122214_Add DeleteBahvior Noaction to SizeCategory in ProductCategory")]
+    partial class AddDeleteBahviorNoactiontoSizeCategoryinProductCategory
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -320,12 +320,13 @@ namespace api.Migrations
                 {
                     b.HasOne("DefaultNamespace.ProductCategory", "ParentProductCategory")
                         .WithMany()
-                        .HasForeignKey("ParentCategoryId");
+                        .HasForeignKey("ParentCategoryId")
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.HasOne("DefaultNamespace.SizeCategory", "SizeCategory")
-                        .WithMany()
+                        .WithMany("ProductCategories")
                         .HasForeignKey("SizeCategoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("ParentProductCategory");
@@ -385,9 +386,9 @@ namespace api.Migrations
             modelBuilder.Entity("DefaultNamespace.SizeOption", b =>
                 {
                     b.HasOne("DefaultNamespace.SizeCategory", "SizeCategory")
-                        .WithMany()
+                        .WithMany("SizeOptions")
                         .HasForeignKey("SizeCategoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("SizeCategory");
@@ -420,6 +421,13 @@ namespace api.Migrations
                     b.Navigation("ProductImages");
 
                     b.Navigation("ProductSizeVariations");
+                });
+
+            modelBuilder.Entity("DefaultNamespace.SizeCategory", b =>
+                {
+                    b.Navigation("ProductCategories");
+
+                    b.Navigation("SizeOptions");
                 });
 
             modelBuilder.Entity("DefaultNamespace.SizeOption", b =>

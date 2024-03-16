@@ -25,7 +25,9 @@ public class ApplicationDbContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
+        modelBuilder.ApplyConfiguration(new SizeCategoryConfiguration());
         modelBuilder.ApplyConfiguration(new ProductCategoryConfiguration());
+        modelBuilder.ApplyConfiguration(new SizeOptionConfiguration());
         modelBuilder.ApplyConfiguration(new ProductSizeVariationConfiguration());
         modelBuilder.ApplyConfiguration(new ProductAttributeConfiguration());
     }

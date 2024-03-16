@@ -5,18 +5,11 @@
 namespace api.Migrations
 {
     /// <inheritdoc />
-    public partial class AddalltablerelatetoProduct : Migration
+    public partial class AddDeleteBahviorNoactiontoSizeCategoryinProductCategory : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AddColumn<int>(
-                name: "SizeCategoryId",
-                table: "ProductCategories",
-                type: "int",
-                nullable: false,
-                defaultValue: 0);
-
             migrationBuilder.CreateTable(
                 name: "Colors",
                 columns: table => new
@@ -57,35 +50,6 @@ namespace api.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "ProductItems",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    OriginalPrice = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    SalePrice = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    ProductId = table.Column<int>(type: "int", nullable: false),
-                    ColorId = table.Column<int>(type: "int", nullable: false),
-                    ColorModelId = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ProductItems", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_ProductItems_Colors_ColorModelId",
-                        column: x => x.ColorModelId,
-                        principalTable: "Colors",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_ProductItems_Products_ProductId",
-                        column: x => x.ProductId,
-                        principalTable: "Products",
-                        principalColumn: "ProductId",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "ProductAttributeOptions",
                 columns: table => new
                 {
@@ -106,6 +70,33 @@ namespace api.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "ProductCategories",
+                columns: table => new
+                {
+                    ProductCategoryId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    CategoryName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    CategoryImage = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CategoryDescription = table.Column<string>(type: "nvarchar(250)", maxLength: 250, nullable: false),
+                    SizeCategoryId = table.Column<int>(type: "int", nullable: false),
+                    ParentCategoryId = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ProductCategories", x => x.ProductCategoryId);
+                    table.ForeignKey(
+                        name: "FK_ProductCategories_ProductCategories_ParentCategoryId",
+                        column: x => x.ParentCategoryId,
+                        principalTable: "ProductCategories",
+                        principalColumn: "ProductCategoryId");
+                    table.ForeignKey(
+                        name: "FK_ProductCategories_SizeCategories_SizeCategoryId",
+                        column: x => x.SizeCategoryId,
+                        principalTable: "SizeCategories",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
                 name: "SizeOptions",
                 columns: table => new
                 {
@@ -122,27 +113,26 @@ namespace api.Migrations
                         name: "FK_SizeOptions_SizeCategories_SizeCategoryId",
                         column: x => x.SizeCategoryId,
                         principalTable: "SizeCategories",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
-                name: "ProductImages",
+                name: "Products",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
+                    ProductId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    ImageFileName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ProductItemId = table.Column<int>(type: "int", nullable: false)
+                    ProductDescription = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ProductCategoryId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ProductImages", x => x.Id);
+                    table.PrimaryKey("PK_Products", x => x.ProductId);
                     table.ForeignKey(
-                        name: "FK_ProductImages_ProductItems_ProductItemId",
-                        column: x => x.ProductItemId,
-                        principalTable: "ProductItems",
-                        principalColumn: "Id",
+                        name: "FK_Products_ProductCategories_ProductCategoryId",
+                        column: x => x.ProductCategoryId,
+                        principalTable: "ProductCategories",
+                        principalColumn: "ProductCategoryId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -168,6 +158,55 @@ namespace api.Migrations
                         column: x => x.ProductId,
                         principalTable: "Products",
                         principalColumn: "ProductId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ProductItems",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    OriginalPrice = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
+                    SalePrice = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
+                    ProductId = table.Column<int>(type: "int", nullable: false),
+                    ColorId = table.Column<int>(type: "int", nullable: false),
+                    ColorModelId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ProductItems", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ProductItems_Colors_ColorModelId",
+                        column: x => x.ColorModelId,
+                        principalTable: "Colors",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ProductItems_Products_ProductId",
+                        column: x => x.ProductId,
+                        principalTable: "Products",
+                        principalColumn: "ProductId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ProductImages",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ImageFileName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ProductItemId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ProductImages", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ProductImages_ProductItems_ProductItemId",
+                        column: x => x.ProductItemId,
+                        principalTable: "ProductItems",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -198,11 +237,6 @@ namespace api.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_ProductCategories_SizeCategoryId",
-                table: "ProductCategories",
-                column: "SizeCategoryId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_ProductAttributeOptions_ProductAttributeTypeId",
                 table: "ProductAttributeOptions",
                 column: "ProductAttributeTypeId");
@@ -211,6 +245,16 @@ namespace api.Migrations
                 name: "IX_ProductAttributes_ProductAttributeOptionId",
                 table: "ProductAttributes",
                 column: "ProductAttributeOptionId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ProductCategories_ParentCategoryId",
+                table: "ProductCategories",
+                column: "ParentCategoryId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ProductCategories_SizeCategoryId",
+                table: "ProductCategories",
+                column: "SizeCategoryId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ProductImages_ProductItemId",
@@ -228,6 +272,11 @@ namespace api.Migrations
                 column: "ProductId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Products_ProductCategoryId",
+                table: "Products",
+                column: "ProductCategoryId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_ProductSizeVariations_SizeOptionsId",
                 table: "ProductSizeVariations",
                 column: "SizeOptionsId");
@@ -236,23 +285,11 @@ namespace api.Migrations
                 name: "IX_SizeOptions_SizeCategoryId",
                 table: "SizeOptions",
                 column: "SizeCategoryId");
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_ProductCategories_SizeCategories_SizeCategoryId",
-                table: "ProductCategories",
-                column: "SizeCategoryId",
-                principalTable: "SizeCategories",
-                principalColumn: "Id",
-                onDelete: ReferentialAction.Cascade);
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropForeignKey(
-                name: "FK_ProductCategories_SizeCategories_SizeCategoryId",
-                table: "ProductCategories");
-
             migrationBuilder.DropTable(
                 name: "ProductAttributes");
 
@@ -278,15 +315,13 @@ namespace api.Migrations
                 name: "Colors");
 
             migrationBuilder.DropTable(
+                name: "Products");
+
+            migrationBuilder.DropTable(
+                name: "ProductCategories");
+
+            migrationBuilder.DropTable(
                 name: "SizeCategories");
-
-            migrationBuilder.DropIndex(
-                name: "IX_ProductCategories_SizeCategoryId",
-                table: "ProductCategories");
-
-            migrationBuilder.DropColumn(
-                name: "SizeCategoryId",
-                table: "ProductCategories");
         }
     }
 }

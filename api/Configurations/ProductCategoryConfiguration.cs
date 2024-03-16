@@ -10,6 +10,12 @@ public class ProductCategoryConfiguration : IEntityTypeConfiguration<ProductCate
     {
         builder.HasOne(pc => pc.ParentProductCategory)
             .WithMany()
-            .HasForeignKey(pc => pc.ParentCategoryId);
+            .HasForeignKey(pc => pc.ParentCategoryId)
+            .OnDelete(DeleteBehavior.NoAction);
+
+        builder.HasOne(pc => pc.SizeCategory)
+            .WithMany(sc => sc.ProductCategories)
+            .HasForeignKey(pc => pc.SizeCategoryId)
+            .OnDelete(DeleteBehavior.NoAction);
     }
 }

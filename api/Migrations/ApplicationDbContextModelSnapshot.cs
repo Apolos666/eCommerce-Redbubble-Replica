@@ -317,12 +317,13 @@ namespace api.Migrations
                 {
                     b.HasOne("DefaultNamespace.ProductCategory", "ParentProductCategory")
                         .WithMany()
-                        .HasForeignKey("ParentCategoryId");
+                        .HasForeignKey("ParentCategoryId")
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.HasOne("DefaultNamespace.SizeCategory", "SizeCategory")
-                        .WithMany()
+                        .WithMany("ProductCategories")
                         .HasForeignKey("SizeCategoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("ParentProductCategory");
@@ -382,9 +383,9 @@ namespace api.Migrations
             modelBuilder.Entity("DefaultNamespace.SizeOption", b =>
                 {
                     b.HasOne("DefaultNamespace.SizeCategory", "SizeCategory")
-                        .WithMany()
+                        .WithMany("SizeOptions")
                         .HasForeignKey("SizeCategoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("SizeCategory");
@@ -417,6 +418,13 @@ namespace api.Migrations
                     b.Navigation("ProductImages");
 
                     b.Navigation("ProductSizeVariations");
+                });
+
+            modelBuilder.Entity("DefaultNamespace.SizeCategory", b =>
+                {
+                    b.Navigation("ProductCategories");
+
+                    b.Navigation("SizeOptions");
                 });
 
             modelBuilder.Entity("DefaultNamespace.SizeOption", b =>
