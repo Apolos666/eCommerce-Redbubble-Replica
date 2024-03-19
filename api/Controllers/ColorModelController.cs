@@ -63,4 +63,34 @@ public class ColorModelController : ControllerBase
 
         return CreatedAtAction(nameof(GetColorByName), new { colorName = savedColorModel.ColorName }, savedColorModel);
     }
+    
+    [HttpPut]
+    [Route("updateColorNameBasedOnColorHex/{colorHex}")]
+    public async Task<ActionResult<GetColorModel>> UpdateColorNameBasedOnColorHex([FromRoute] string colorHex, [FromBody] UpdateColorModelName updateColorModelName)
+    {
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+        
+        var updatedColorModel = await _colorModelRepository.UpdateColorNameBasedOnColorHex(colorHex, updateColorModelName);
+
+        if (updatedColorModel is null)
+            return NotFound($"Color with hex code {colorHex} not found");
+        
+        return Ok(updatedColorModel);
+    }
+    
+    [HttpPut]
+    [Route("updateColorHexBasedOnColorName/{colorName}")]
+    public async Task<ActionResult<GetColorModel>> UpdateColorHexBasedOnColorName([FromRoute] string colorName, [FromBody] UpdateColorModelHex updateColorModelHex)
+    {
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+        
+        var updatedColorModel = await _colorModelRepository.UpdateColorHexBasedOnColorName(colorName, updateColorModelHex);
+
+        if (updatedColorModel is null)
+            return NotFound($"Color with name {colorName} not found");
+        
+        return Ok(updatedColorModel);
+    }
 }

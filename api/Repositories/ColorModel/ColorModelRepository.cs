@@ -41,8 +41,8 @@ public class ColorModelRepository : IColorModelRepository
 
     public async Task<GetColorModel> GetColorByColorHex(string ColorHexCode)
     {
-        var colorModel = _context.ColorModels.
-            FirstOrDefaultAsync(c => c.ColorHexCode.TrimStart('#').ToLower().Equals(ColorHexCode.TrimStart('#').ToLower()));
+        var colorHexCodeWithoutHash = ColorHexCode.TrimStart('#').ToLower();
+        var colorModel = await GetColorModelBasedOnColorHex(colorHexCodeWithoutHash);
         
         if (colorModel is null)
             return null;
@@ -50,6 +50,14 @@ public class ColorModelRepository : IColorModelRepository
         var getColorModel = _mapper.Map<GetColorModel>(colorModel);
         
         return getColorModel;
+    }
+
+    private async Task<Models.ColorModel?> GetColorModelBasedOnColorHex(string colorHexCodeWithoutHash)
+    {
+        var colorModel = await _context.ColorModels
+            .FromSqlInterpolated($"SELECT * FROM Colors WHERE LOWER(REPLACE(ColorHexCode, '#', '')) = {colorHexCodeWithoutHash}")
+            .FirstOrDefaultAsync();
+        return colorModel;
     }
 
     public async Task<GetColorModel> Add(AddColorModel addColorModel)
@@ -72,8 +80,35 @@ public class ColorModelRepository : IColorModelRepository
         }
     }
 
-    public Task<GetColorModel> Update(UpdateColorModel updateColorModel)
+    public async Task<GetColorModel> UpdateColorNameBasedOnColorHex(string colorHex, UpdateColorModelName updateColorModelName)
     {
-        throw new NotImplementedException();
+        var colorModel = await GetColorModelBasedOnColorHex(colorHex);
+        
+        if (colorModel is null)
+            return null;
+        
+        _mapper.Map(updateColorModelName, colorModel);
+
+        _context.ColorModels.Update(colorModel);
+        await _context.SaveChangesAsync();
+        
+        var getUpdatedColorModel = _mapper.Map<GetColorModel>(colorModel);
+        return getUpdatedColorModel;
+    }
+
+    public async Task<GetColorModel> UpdateColorHexBasedOnColorName(string colorName, UpdateColorModelHex updateColorModelHex)
+    {
+        var colorModel = await _context.ColorModels.FirstOrDefaultAsync(c => c.ColorName.ToLower() == colorName.ToLower());
+        
+        if (colorModel is null)
+            return null;
+        
+        _mapper.Map(updateColorModelHex, colorModel);
+
+        _context.ColorModels.Update(colorModel);
+        await _context.SaveChangesAsync();
+        
+        var getUpdatedColorModel = _mapper.Map<GetColorModel>(colorModel);
+        return getUpdatedColorModel;
     }
 }
