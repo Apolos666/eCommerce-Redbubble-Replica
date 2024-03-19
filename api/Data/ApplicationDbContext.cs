@@ -26,6 +26,7 @@ public class ApplicationDbContext : DbContext
     {
         base.OnModelCreating(modelBuilder);
         modelBuilder.ApplyConfiguration(new ColorModelConfiguration());
+        modelBuilder.ApplyConfiguration(new ProductAttributeTypeConfiguration());
         modelBuilder.ApplyConfiguration(new SizeCategoryConfiguration());
         modelBuilder.ApplyConfiguration(new ProductCategoryConfiguration());
         modelBuilder.ApplyConfiguration(new SizeOptionConfiguration());
