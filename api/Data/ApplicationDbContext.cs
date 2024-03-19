@@ -1,5 +1,5 @@
 ﻿using api.Configurations;
-using DefaultNamespace;
+using api.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace api.Data;
@@ -25,6 +25,7 @@ public class ApplicationDbContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
+        modelBuilder.ApplyConfiguration(new ColorModelConfiguration());
         modelBuilder.ApplyConfiguration(new SizeCategoryConfiguration());
         modelBuilder.ApplyConfiguration(new ProductCategoryConfiguration());
         modelBuilder.ApplyConfiguration(new SizeOptionConfiguration());

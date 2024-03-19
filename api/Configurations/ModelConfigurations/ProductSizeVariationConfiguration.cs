@@ -1,4 +1,4 @@
-﻿using DefaultNamespace;
+﻿using api.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 

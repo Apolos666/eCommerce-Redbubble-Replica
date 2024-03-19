@@ -1,8 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Microsoft.EntityFrameworkCore;
 
-namespace DefaultNamespace;
+namespace api.Models;
 
 [Table("ProductCategories")]
 public class ProductCategory

@@ -1,5 +1,6 @@
 using api.Configurations;
 using api.Data;
+using api.Repositories.ColorModel;
 using api.Repositories.ProductCategory;
 using Microsoft.EntityFrameworkCore;
 
@@ -21,6 +22,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddControllers();
 
 builder.Services.AddScoped<IProductCategoryRepository, ProductCategoryRepository>();
+builder.Services.AddScoped<IColorModelRepository, ColorModelRepository>();
 
 var app = builder.Build();
 

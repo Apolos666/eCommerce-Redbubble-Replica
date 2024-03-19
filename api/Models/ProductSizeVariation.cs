@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace DefaultNamespace;
+namespace api.Models;
 
 public class ProductSizeVariation
 {

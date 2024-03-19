@@ -1,9 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Runtime.CompilerServices;
 using Microsoft.EntityFrameworkCore;
 
-namespace DefaultNamespace;
+namespace api.Models;
 
 [Table("ProductItems")]
 public class ProductItem

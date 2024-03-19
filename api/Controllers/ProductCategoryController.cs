@@ -1,9 +1,10 @@
-﻿using api.Repositories.ProductCategory;
+﻿using api.DTOs.ProductCategoryDTOs;
+using api.Repositories.ProductCategory;
 using Microsoft.AspNetCore.Mvc;
 
 namespace api.Controllers;
 
-[Route("api/[controller]")]
+[Route("api/[controller]s")]
 [ApiController]
 public class ProductCategoryController : ControllerBase
 {
@@ -15,7 +16,7 @@ public class ProductCategoryController : ControllerBase
     }
     
     [HttpGet]
-    public async Task<IActionResult> GetAll()
+    public async Task<ActionResult<GetProductCategory>> GetAll()
     {
         var productCategories = await _productCategoryRepository.GetAll();
 

@@ -1,6 +1,6 @@
 ﻿using api.DTOs.ProductCategoryDTOs;
+using api.Models;
 using AutoMapper;
-using DefaultNamespace;
 
 namespace api.Configurations.AutoMapperConfigurations;
 

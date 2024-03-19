@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 
-namespace DefaultNamespace;
+namespace api.Models;
 
 [Table("Products")]
 public class Product
