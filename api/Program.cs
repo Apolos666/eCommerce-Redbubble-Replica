@@ -21,12 +21,19 @@ builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddControllers();
+builder.Services.AddProblemDetails();
+builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 
 builder.Services.AddScoped<IProductCategoryRepository, ProductCategoryRepository>();
 builder.Services.AddScoped<IColorModelRepository, ColorModelRepository>();
 builder.Services.AddScoped<IProductAttributeTypeRepository, ProductAttributeTypeRepository>();
 
 var app = builder.Build();
+
+app.UseStatusCodePages();
+app.UseExceptionHandler();
+
+// app.UseExceptionHandler(exceptionHandlerApp => exceptionHandlerApp.ConfigureExceptionHandler());
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

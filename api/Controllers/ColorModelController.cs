@@ -64,7 +64,7 @@ public class ColorModelController : ControllerBase
         return CreatedAtAction(nameof(GetColorByName), new { colorName = savedColorModel.ColorName }, savedColorModel);
     }
     
-    [HttpPut]
+    [HttpPatch]
     [Route("updateColorNameBasedOnColorHex/{colorHex}")]
     public async Task<ActionResult<GetColorModel>> UpdateColorNameBasedOnColorHex([FromRoute] string colorHex, [FromBody] UpdateColorModelName updateColorModelName)
     {
@@ -79,7 +79,7 @@ public class ColorModelController : ControllerBase
         return Ok(updatedColorModel);
     }
     
-    [HttpPut]
+    [HttpPatch]
     [Route("updateColorHexBasedOnColorName/{colorName}")]
     public async Task<ActionResult<GetColorModel>> UpdateColorHexBasedOnColorName([FromRoute] string colorName, [FromBody] UpdateColorModelHex updateColorModelHex)
     {
