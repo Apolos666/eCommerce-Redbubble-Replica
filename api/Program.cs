@@ -5,6 +5,7 @@ using api.Repositories.AttributeTypeModel;
 using api.Repositories.ColorModel;
 using api.Repositories.Product;
 using api.Repositories.ProductCategory;
+using api.Repositories.ProductImage;
 using api.Repositories.ProductItem;
 using Microsoft.EntityFrameworkCore;
 
@@ -31,7 +32,8 @@ builder.Services.AddScoped<IProductCategoryRepository, ProductCategoryRepository
     .AddScoped<IColorModelRepository, ColorModelRepository>()
     .AddScoped<IProductAttributeTypeRepository, ProductAttributeTypeRepository>()
     .AddScoped<IProductRepository, ProductRepository>()
-    .AddScoped<IProductItemRepository, ProductItemRepository>();
+    .AddScoped<IProductItemRepository, ProductItemRepository>()
+    .AddScoped<IProductImageRepository, ProductImageRepository>();
 
 var app = builder.Build();
 
