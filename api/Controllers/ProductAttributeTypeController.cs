@@ -21,8 +21,8 @@ public class ProductAttributeTypeController : ControllerBase
     {
         var attributeTypes = await _productAttributeTypeRepository.GetAll();
 
-        if (attributeTypes is null)
-            return NotFound("No product attribute types found.");
+        if (attributeTypes.Count == 0)
+            return NoContent();
         
         return Ok(attributeTypes);
     }

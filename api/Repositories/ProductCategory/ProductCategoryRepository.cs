@@ -27,4 +27,24 @@ public class ProductCategoryRepository : IProductCategoryRepository
 
         return getProductCategories;
     }
+
+    public async Task<GetProductCategory> GetProductCategoryById(int id)
+    {
+        var productCategory = await _context.ProductCategories.FirstOrDefaultAsync(pc => pc.ProductCategoryId == id);
+        
+        if (productCategory is null)
+            return null;
+        
+        var getProductCategory = _mapper.Map<GetProductCategory>(productCategory);
+        return getProductCategory;
+    }
+
+    public async Task<(Models.ProductCategory, GetProductCategory)> AddProductCategory(AddProductCategory addProductCategory)
+    {
+        var productCategory = _mapper.Map<Models.ProductCategory>(addProductCategory);
+        var savedProductCategory = await _context.ProductCategories.AddAsync(productCategory);
+        await _context.SaveChangesAsync();
+        var getProductCategory = _mapper.Map<GetProductCategory>(savedProductCategory.Entity);
+        return (savedProductCategory.Entity, getProductCategory);
+    }
 }

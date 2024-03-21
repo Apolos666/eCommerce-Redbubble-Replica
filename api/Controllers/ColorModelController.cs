@@ -20,8 +20,8 @@ public class ColorModelController : ControllerBase
     {
         var colorModels = await _colorModelRepository.GetAll();
 
-        if (colorModels is null)
-            return NotFound();
+        if (colorModels.Count == 0)
+            return NoContent();
         
         return Ok(colorModels);
     }

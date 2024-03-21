@@ -16,6 +16,7 @@ public class ProductItem
     public decimal SalePrice { get; set; }
     public int ProductId { get; set; }
     public Product Product { get; set; }    
+    [ForeignKey("ColorModel")]
     public int ColorId { get; set; }
     public ColorModel ColorModel { get; set; }
     public ICollection<ProductSizeVariation> ProductSizeVariations { get; set; }

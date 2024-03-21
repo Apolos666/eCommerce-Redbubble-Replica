@@ -20,9 +20,32 @@ public class ProductCategoryController : ControllerBase
     {
         var productCategories = await _productCategoryRepository.GetAll();
 
-        if (productCategories is null)
-            return NotFound();
+        if (productCategories.Count == 0)
+            return NoContent();
         
         return Ok(productCategories);
+    }
+    
+    [HttpGet]
+    [Route("{id:int}")]
+    public async Task<ActionResult<GetProductCategory>> GetProductCategoryById([FromRoute] int id)
+    {
+        var productCategory = await _productCategoryRepository.GetProductCategoryById(id);
+
+        if (productCategory is null)
+            return NotFound($"Product category with id {id} not found");
+        
+        return Ok(productCategory);
+    }
+    
+    [HttpPost]
+    public async Task<ActionResult<GetProductCategory>> Add([FromBody] AddProductCategory addProductCategory)
+    {
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+        
+        var (savedProductCategory, getProductCategory) = await _productCategoryRepository.AddProductCategory(addProductCategory); ;
+        
+        return CreatedAtAction(nameof(GetProductCategoryById), new { id = savedProductCategory.ProductCategoryId }, getProductCategory);
     }
 }

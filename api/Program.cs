@@ -1,13 +1,16 @@
 using api.Configurations;
 using api.Data;
+using api.Models;
 using api.Repositories.AttributeTypeModel;
 using api.Repositories.ColorModel;
+using api.Repositories.Product;
 using api.Repositories.ProductCategory;
+using api.Repositories.ProductItem;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
-     
-var dbConfig = new DatabaseConfig(); 
+
+var dbConfig = new DatabaseConfig();
 builder.Configuration.GetSection("DatabaseConfig").Bind(dbConfig);
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
@@ -24,9 +27,11 @@ builder.Services.AddControllers();
 builder.Services.AddProblemDetails();
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 
-builder.Services.AddScoped<IProductCategoryRepository, ProductCategoryRepository>();
-builder.Services.AddScoped<IColorModelRepository, ColorModelRepository>();
-builder.Services.AddScoped<IProductAttributeTypeRepository, ProductAttributeTypeRepository>();
+builder.Services.AddScoped<IProductCategoryRepository, ProductCategoryRepository>()
+    .AddScoped<IColorModelRepository, ColorModelRepository>()
+    .AddScoped<IProductAttributeTypeRepository, ProductAttributeTypeRepository>()
+    .AddScoped<IProductRepository, ProductRepository>()
+    .AddScoped<IProductItemRepository, ProductItemRepository>();
 
 var app = builder.Build();
 
@@ -38,8 +43,8 @@ app.UseExceptionHandler();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
+    // app.UseSwagger();
+    // app.UseSwaggerUI();
 }
 
 app.UseHttpsRedirection();

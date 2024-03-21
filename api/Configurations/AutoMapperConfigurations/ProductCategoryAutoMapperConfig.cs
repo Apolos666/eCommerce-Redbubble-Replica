@@ -9,5 +9,6 @@ public class ProductCategoryAutoMapperConfig : Profile
     public ProductCategoryAutoMapperConfig()
     {
         CreateMap<ProductCategory, GetProductCategory>();
+        CreateMap<AddProductCategory, ProductCategory>();
     }
 }
