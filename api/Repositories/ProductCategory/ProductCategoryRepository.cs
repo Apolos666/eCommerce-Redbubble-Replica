@@ -1,5 +1,8 @@
 ﻿using api.Data;
 using api.DTOs.ProductCategoryDTOs;
+using api.Extensions;
+using api.Models;
+using api.Utilities;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 
@@ -16,16 +19,14 @@ public class ProductCategoryRepository : IProductCategoryRepository
         _context = context;
     }
     
-    public async Task<List<GetProductCategory>> GetAll()
+    public async Task<PagedResult<GetProductCategory>> GetAll(ProductCategoryParameters queryParameters)
     {
         var productCategoryQuery = _context.ProductCategories.AsQueryable();
         
-        // Add more logic here
-        
-        var productCategories = await productCategoryQuery.ToListAsync();
-        var getProductCategories = _mapper.Map<List<GetProductCategory>>(productCategories);
+        var getProductCategoryPagedResults = await productCategoryQuery
+            .CreatePagedResultsAsync<Models.ProductCategory, GetProductCategory>(_mapper.ConfigurationProvider, queryParameters.PageNumber, queryParameters.PageSize);
 
-        return getProductCategories;
+        return getProductCategoryPagedResults;
     }
 
     public async Task<GetProductCategory> GetProductCategoryById(int id)

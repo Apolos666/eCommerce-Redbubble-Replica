@@ -1,6 +1,8 @@
 ﻿using api.DTOs.ProductCategoryDTOs;
+using api.Models;
 using api.Repositories.ProductCategory;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 
 namespace api.Controllers;
 
@@ -16,9 +18,21 @@ public class ProductCategoryController : ControllerBase
     }
     
     [HttpGet]
-    public async Task<ActionResult<GetProductCategory>> GetAll()
+    public async Task<ActionResult<GetProductCategory>> GetAll([FromQuery] ProductCategoryParameters ProductCategoryParameters)
     {
-        var productCategories = await _productCategoryRepository.GetAll();
+        var productCategories = await _productCategoryRepository.GetAll(ProductCategoryParameters);
+
+        var metaData = new
+        {
+            productCategories.TotalCount,
+            productCategories.PageSize,
+            productCategories.CurrentPage,
+            productCategories.TotalNumberOfPages,
+            productCategories.HasNext,
+            productCategories.HasPrevious
+        };
+
+        Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(metaData));
 
         if (productCategories.Count == 0)
             return NoContent();

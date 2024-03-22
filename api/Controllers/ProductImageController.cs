@@ -34,7 +34,7 @@ public class ProductImageController : ControllerBase
 
         if (productImage is null)
             return NotFound($"Product image with id {id} not found");
-        
+         
         return Ok(productImage);
     }
     
