@@ -9,6 +9,7 @@ public class SizeOptionAutoMapperConfig : Profile
     public SizeOptionAutoMapperConfig()
     {
         CreateMap<SizeOption, GetSizeOption>();
+        CreateMap<SizeOption, SizeOptionDTO>();
         CreateMap<AddSizeOption, SizeOption>();
     }
 }

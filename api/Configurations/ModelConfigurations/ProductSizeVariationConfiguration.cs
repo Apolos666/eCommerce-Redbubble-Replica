@@ -8,8 +8,10 @@ public class ProductSizeVariationConfiguration : IEntityTypeConfiguration<Produc
 {
     public void Configure(EntityTypeBuilder<ProductSizeVariation> builder)
     {
-        builder.HasKey(psv => new { psv.ProductItemId, psv.SizeOptionsId });
-
+        builder.HasKey(psv => new { psv.Id, psv.ProductItemId, psv.SizeOptionsId });
+        builder.HasIndex(psv => new { psv.ProductItemId, psv.SizeOptionsId }).IsUnique();
+        builder.Property(psv => psv.Id).ValueGeneratedOnAdd();
+        
         builder.HasOne(psv => psv.ProductItem)
             .WithMany(pi => pi.ProductSizeVariations)
             .HasForeignKey(psv => psv.ProductItemId);

@@ -7,6 +7,7 @@ using api.Repositories.ProductAttributeOptionModel;
 using api.Repositories.ProductCategory;
 using api.Repositories.ProductImage;
 using api.Repositories.ProductItem;
+using api.Repositories.ProductSizeVariation;
 using api.Repositories.SizeCategory;
 using api.Repositories.SizeOption;
 using Microsoft.EntityFrameworkCore;
@@ -38,7 +39,8 @@ builder.Services.AddScoped<IProductCategoryRepository, ProductCategoryRepository
     .AddScoped<IProductItemRepository, ProductItemRepository>()
     .AddScoped<IProductImageRepository, ProductImageRepository>()
     .AddScoped<ISizeCategoryRepository, SizeCategoryRepository>()
-    .AddScoped<ISizeOptionRepository, SizeOptionRepository>();
+    .AddScoped<ISizeOptionRepository, SizeOptionRepository>()
+    .AddScoped<IProductSizeVariationRepository, ProductSizeVariationRepository>();
 
 var app = builder.Build();
 

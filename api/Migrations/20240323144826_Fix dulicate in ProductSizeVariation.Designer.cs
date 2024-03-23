@@ -12,8 +12,8 @@ using api.Data;
 namespace api.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240316122214_Add DeleteBahvior Noaction to SizeCategory in ProductCategory")]
-    partial class AddDeleteBahviorNoactiontoSizeCategoryinProductCategory
+    [Migration("20240323144826_Fix dulicate in ProductSizeVariation")]
+    partial class FixdulicateinProductSizeVariation
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -25,7 +25,7 @@ namespace api.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("DefaultNamespace.ColorModel", b =>
+            modelBuilder.Entity("api.Models.ColorModel", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -33,16 +33,26 @@ namespace api.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("ColorHexCode")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<string>("ColorName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ColorHexCode")
+                        .IsUnique();
+
+                    b.HasIndex("ColorName")
+                        .IsUnique();
 
                     b.ToTable("Colors");
                 });
 
-            modelBuilder.Entity("DefaultNamespace.Product", b =>
+            modelBuilder.Entity("api.Models.Product", b =>
                 {
                     b.Property<int>("ProductId")
                         .ValueGeneratedOnAdd()
@@ -56,6 +66,10 @@ namespace api.Migrations
                     b.Property<string>("ProductDescription")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("ProductName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("ProductId");
 
                     b.HasIndex("ProductCategoryId");
@@ -63,7 +77,7 @@ namespace api.Migrations
                     b.ToTable("Products");
                 });
 
-            modelBuilder.Entity("DefaultNamespace.ProductAttribute", b =>
+            modelBuilder.Entity("api.Models.ProductAttribute", b =>
                 {
                     b.Property<int>("ProductId")
                         .HasColumnType("int");
@@ -81,7 +95,7 @@ namespace api.Migrations
                     b.ToTable("ProductAttributes");
                 });
 
-            modelBuilder.Entity("DefaultNamespace.ProductAttributeOption", b =>
+            modelBuilder.Entity("api.Models.ProductAttributeOption", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -89,8 +103,9 @@ namespace api.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("AttributeOptionName")
-                        .HasColumnType("int");
+                    b.Property<string>("AttributeOptionName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("ProductAttributeTypeId")
                         .HasColumnType("int");
@@ -102,7 +117,7 @@ namespace api.Migrations
                     b.ToTable("ProductAttributeOptions");
                 });
 
-            modelBuilder.Entity("DefaultNamespace.ProductAttributeType", b =>
+            modelBuilder.Entity("api.Models.ProductAttributeType", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -112,14 +127,17 @@ namespace api.Migrations
 
                     b.Property<string>("AttributeName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("AttributeName")
+                        .IsUnique();
 
                     b.ToTable("ProductAttributeTypes");
                 });
 
-            modelBuilder.Entity("DefaultNamespace.ProductCategory", b =>
+            modelBuilder.Entity("api.Models.ProductCategory", b =>
                 {
                     b.Property<int>("ProductCategoryId")
                         .ValueGeneratedOnAdd()
@@ -156,7 +174,7 @@ namespace api.Migrations
                     b.ToTable("ProductCategories");
                 });
 
-            modelBuilder.Entity("DefaultNamespace.ProductImage", b =>
+            modelBuilder.Entity("api.Models.ProductImage", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -178,7 +196,7 @@ namespace api.Migrations
                     b.ToTable("ProductImages");
                 });
 
-            modelBuilder.Entity("DefaultNamespace.ProductItem", b =>
+            modelBuilder.Entity("api.Models.ProductItem", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -187,9 +205,6 @@ namespace api.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int>("ColorId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ColorModelId")
                         .HasColumnType("int");
 
                     b.Property<decimal>("OriginalPrice")
@@ -205,35 +220,40 @@ namespace api.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ColorModelId");
+                    b.HasIndex("ColorId");
 
                     b.HasIndex("ProductId");
 
                     b.ToTable("ProductItems");
                 });
 
-            modelBuilder.Entity("DefaultNamespace.ProductSizeVariation", b =>
+            modelBuilder.Entity("api.Models.ProductSizeVariation", b =>
                 {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
                     b.Property<int>("ProductItemId")
                         .HasColumnType("int");
 
                     b.Property<int>("SizeOptionsId")
                         .HasColumnType("int");
 
-                    b.Property<int>("Id")
-                        .HasColumnType("int");
-
                     b.Property<int>("QuantityInStock")
                         .HasColumnType("int");
 
-                    b.HasKey("ProductItemId", "SizeOptionsId");
+                    b.HasKey("Id", "ProductItemId", "SizeOptionsId");
+
+                    b.HasIndex("ProductItemId");
 
                     b.HasIndex("SizeOptionsId");
 
                     b.ToTable("ProductSizeVariations");
                 });
 
-            modelBuilder.Entity("DefaultNamespace.SizeCategory", b =>
+            modelBuilder.Entity("api.Models.SizeCategory", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -250,7 +270,7 @@ namespace api.Migrations
                     b.ToTable("SizeCategories");
                 });
 
-            modelBuilder.Entity("DefaultNamespace.SizeOption", b =>
+            modelBuilder.Entity("api.Models.SizeOption", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -275,9 +295,9 @@ namespace api.Migrations
                     b.ToTable("SizeOptions");
                 });
 
-            modelBuilder.Entity("DefaultNamespace.Product", b =>
+            modelBuilder.Entity("api.Models.Product", b =>
                 {
-                    b.HasOne("DefaultNamespace.ProductCategory", "ProductCategory")
+                    b.HasOne("api.Models.ProductCategory", "ProductCategory")
                         .WithMany("Products")
                         .HasForeignKey("ProductCategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -286,15 +306,15 @@ namespace api.Migrations
                     b.Navigation("ProductCategory");
                 });
 
-            modelBuilder.Entity("DefaultNamespace.ProductAttribute", b =>
+            modelBuilder.Entity("api.Models.ProductAttribute", b =>
                 {
-                    b.HasOne("DefaultNamespace.ProductAttributeOption", "ProductAttributeOption")
+                    b.HasOne("api.Models.ProductAttributeOption", "ProductAttributeOption")
                         .WithMany("ProductAttributes")
                         .HasForeignKey("ProductAttributeOptionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("DefaultNamespace.Product", "Product")
+                    b.HasOne("api.Models.Product", "Product")
                         .WithMany("ProductAttributes")
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -305,9 +325,9 @@ namespace api.Migrations
                     b.Navigation("ProductAttributeOption");
                 });
 
-            modelBuilder.Entity("DefaultNamespace.ProductAttributeOption", b =>
+            modelBuilder.Entity("api.Models.ProductAttributeOption", b =>
                 {
-                    b.HasOne("DefaultNamespace.ProductAttributeType", "ProductAttributeType")
+                    b.HasOne("api.Models.ProductAttributeType", "ProductAttributeType")
                         .WithMany("ProductAttributeOptions")
                         .HasForeignKey("ProductAttributeTypeId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -316,14 +336,14 @@ namespace api.Migrations
                     b.Navigation("ProductAttributeType");
                 });
 
-            modelBuilder.Entity("DefaultNamespace.ProductCategory", b =>
+            modelBuilder.Entity("api.Models.ProductCategory", b =>
                 {
-                    b.HasOne("DefaultNamespace.ProductCategory", "ParentProductCategory")
+                    b.HasOne("api.Models.ProductCategory", "ParentProductCategory")
                         .WithMany()
                         .HasForeignKey("ParentCategoryId")
                         .OnDelete(DeleteBehavior.NoAction);
 
-                    b.HasOne("DefaultNamespace.SizeCategory", "SizeCategory")
+                    b.HasOne("api.Models.SizeCategory", "SizeCategory")
                         .WithMany("ProductCategories")
                         .HasForeignKey("SizeCategoryId")
                         .OnDelete(DeleteBehavior.NoAction)
@@ -334,9 +354,9 @@ namespace api.Migrations
                     b.Navigation("SizeCategory");
                 });
 
-            modelBuilder.Entity("DefaultNamespace.ProductImage", b =>
+            modelBuilder.Entity("api.Models.ProductImage", b =>
                 {
-                    b.HasOne("DefaultNamespace.ProductItem", "ProductItem")
+                    b.HasOne("api.Models.ProductItem", "ProductItem")
                         .WithMany("ProductImages")
                         .HasForeignKey("ProductItemId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -345,15 +365,15 @@ namespace api.Migrations
                     b.Navigation("ProductItem");
                 });
 
-            modelBuilder.Entity("DefaultNamespace.ProductItem", b =>
+            modelBuilder.Entity("api.Models.ProductItem", b =>
                 {
-                    b.HasOne("DefaultNamespace.ColorModel", "ColorModel")
+                    b.HasOne("api.Models.ColorModel", "ColorModel")
                         .WithMany()
-                        .HasForeignKey("ColorModelId")
+                        .HasForeignKey("ColorId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("DefaultNamespace.Product", "Product")
+                    b.HasOne("api.Models.Product", "Product")
                         .WithMany("ProductItems")
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -364,15 +384,15 @@ namespace api.Migrations
                     b.Navigation("Product");
                 });
 
-            modelBuilder.Entity("DefaultNamespace.ProductSizeVariation", b =>
+            modelBuilder.Entity("api.Models.ProductSizeVariation", b =>
                 {
-                    b.HasOne("DefaultNamespace.ProductItem", "ProductItem")
+                    b.HasOne("api.Models.ProductItem", "ProductItem")
                         .WithMany("ProductSizeVariations")
                         .HasForeignKey("ProductItemId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("DefaultNamespace.SizeOption", "SizeOption")
+                    b.HasOne("api.Models.SizeOption", "SizeOption")
                         .WithMany("ProductSizeVariations")
                         .HasForeignKey("SizeOptionsId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -383,9 +403,9 @@ namespace api.Migrations
                     b.Navigation("SizeOption");
                 });
 
-            modelBuilder.Entity("DefaultNamespace.SizeOption", b =>
+            modelBuilder.Entity("api.Models.SizeOption", b =>
                 {
-                    b.HasOne("DefaultNamespace.SizeCategory", "SizeCategory")
+                    b.HasOne("api.Models.SizeCategory", "SizeCategory")
                         .WithMany("SizeOptions")
                         .HasForeignKey("SizeCategoryId")
                         .OnDelete(DeleteBehavior.NoAction)
@@ -394,43 +414,43 @@ namespace api.Migrations
                     b.Navigation("SizeCategory");
                 });
 
-            modelBuilder.Entity("DefaultNamespace.Product", b =>
+            modelBuilder.Entity("api.Models.Product", b =>
                 {
                     b.Navigation("ProductAttributes");
 
                     b.Navigation("ProductItems");
                 });
 
-            modelBuilder.Entity("DefaultNamespace.ProductAttributeOption", b =>
+            modelBuilder.Entity("api.Models.ProductAttributeOption", b =>
                 {
                     b.Navigation("ProductAttributes");
                 });
 
-            modelBuilder.Entity("DefaultNamespace.ProductAttributeType", b =>
+            modelBuilder.Entity("api.Models.ProductAttributeType", b =>
                 {
                     b.Navigation("ProductAttributeOptions");
                 });
 
-            modelBuilder.Entity("DefaultNamespace.ProductCategory", b =>
+            modelBuilder.Entity("api.Models.ProductCategory", b =>
                 {
                     b.Navigation("Products");
                 });
 
-            modelBuilder.Entity("DefaultNamespace.ProductItem", b =>
+            modelBuilder.Entity("api.Models.ProductItem", b =>
                 {
                     b.Navigation("ProductImages");
 
                     b.Navigation("ProductSizeVariations");
                 });
 
-            modelBuilder.Entity("DefaultNamespace.SizeCategory", b =>
+            modelBuilder.Entity("api.Models.SizeCategory", b =>
                 {
                     b.Navigation("ProductCategories");
 
                     b.Navigation("SizeOptions");
                 });
 
-            modelBuilder.Entity("DefaultNamespace.SizeOption", b =>
+            modelBuilder.Entity("api.Models.SizeOption", b =>
                 {
                     b.Navigation("ProductSizeVariations");
                 });

@@ -226,19 +226,24 @@ namespace api.Migrations
 
             modelBuilder.Entity("api.Models.ProductSizeVariation", b =>
                 {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
                     b.Property<int>("ProductItemId")
                         .HasColumnType("int");
 
                     b.Property<int>("SizeOptionsId")
                         .HasColumnType("int");
 
-                    b.Property<int>("Id")
-                        .HasColumnType("int");
-
                     b.Property<int>("QuantityInStock")
                         .HasColumnType("int");
 
-                    b.HasKey("ProductItemId", "SizeOptionsId");
+                    b.HasKey("Id", "ProductItemId", "SizeOptionsId");
+
+                    b.HasIndex("ProductItemId");
 
                     b.HasIndex("SizeOptionsId");
 
