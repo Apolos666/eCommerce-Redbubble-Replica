@@ -9,6 +9,7 @@ public class ProductAttributeTypeAutoMapperConfig : Profile
     public ProductAttributeTypeAutoMapperConfig()
     {
         CreateMap<ProductAttributeType, GetProductAttributeType>();
+        CreateMap<ProductAttributeType, ProductAttributeTypeDTO>();
         CreateMap<GetProductAttributeType, ProductAttributeType>();
         CreateMap<AddProductAttributeType, ProductAttributeType>();
         CreateMap<UpdateProductAttributeType, ProductAttributeType>();
