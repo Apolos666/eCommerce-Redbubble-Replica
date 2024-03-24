@@ -5,7 +5,7 @@
 namespace api.Migrations
 {
     /// <inheritdoc />
-    public partial class FixdulicateinProductSizeVariation : Migration
+    public partial class AddClusterUniqueProductIdandProductAttributeOptionIdAlsoAddValueGenerateOnAddtoid : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -137,32 +137,33 @@ namespace api.Migrations
             //             principalColumn: "ProductCategoryId",
             //             onDelete: ReferentialAction.Cascade);
             //     });
-            //
-            // migrationBuilder.CreateTable(
-            //     name: "ProductAttributes",
-            //     columns: table => new
-            //     {
-            //         ProductId = table.Column<int>(type: "int", nullable: false),
-            //         ProductAttributeOptionId = table.Column<int>(type: "int", nullable: false),
-            //         Id = table.Column<int>(type: "int", nullable: false)
-            //     },
-            //     constraints: table =>
-            //     {
-            //         table.PrimaryKey("PK_ProductAttributes", x => new { x.ProductId, x.ProductAttributeOptionId });
-            //         table.ForeignKey(
-            //             name: "FK_ProductAttributes_ProductAttributeOptions_ProductAttributeOptionId",
-            //             column: x => x.ProductAttributeOptionId,
-            //             principalTable: "ProductAttributeOptions",
-            //             principalColumn: "Id",
-            //             onDelete: ReferentialAction.Cascade);
-            //         table.ForeignKey(
-            //             name: "FK_ProductAttributes_Products_ProductId",
-            //             column: x => x.ProductId,
-            //             principalTable: "Products",
-            //             principalColumn: "ProductId",
-            //             onDelete: ReferentialAction.Cascade);
-            //     });
-            //
+
+            migrationBuilder.CreateTable(
+                name: "ProductAttributes",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ProductId = table.Column<int>(type: "int", nullable: false),
+                    ProductAttributeOptionId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ProductAttributes", x => new { x.Id, x.ProductId, x.ProductAttributeOptionId });
+                    table.ForeignKey(
+                        name: "FK_ProductAttributes_ProductAttributeOptions_ProductAttributeOptionId",
+                        column: x => x.ProductAttributeOptionId,
+                        principalTable: "ProductAttributeOptions",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ProductAttributes_Products_ProductId",
+                        column: x => x.ProductId,
+                        principalTable: "Products",
+                        principalColumn: "ProductId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             // migrationBuilder.CreateTable(
             //     name: "ProductItems",
             //     columns: table => new
@@ -190,7 +191,7 @@ namespace api.Migrations
             //             principalColumn: "ProductId",
             //             onDelete: ReferentialAction.Cascade);
             //     });
-            //
+
             // migrationBuilder.CreateTable(
             //     name: "ProductImages",
             //     columns: table => new
@@ -210,34 +211,33 @@ namespace api.Migrations
             //             principalColumn: "Id",
             //             onDelete: ReferentialAction.Cascade);
             //     });
-
-            migrationBuilder.CreateTable(
-                name: "ProductSizeVariations",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    ProductItemId = table.Column<int>(type: "int", nullable: false),
-                    SizeOptionsId = table.Column<int>(type: "int", nullable: false),
-                    QuantityInStock = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ProductSizeVariations", x => x.Id);
-                    table.UniqueConstraint("AK_ProductSizeVariations_ProductItemId_SizeOptionsId", x => new { x.ProductItemId, x.SizeOptionsId });
-                    table.ForeignKey(
-                        name: "FK_ProductSizeVariations_ProductItems_ProductItemId",
-                        column: x => x.ProductItemId,
-                        principalTable: "ProductItems",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_ProductSizeVariations_SizeOptions_SizeOptionsId",
-                        column: x => x.SizeOptionsId,
-                        principalTable: "SizeOptions",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
+            //
+            // migrationBuilder.CreateTable(
+            //     name: "ProductSizeVariations",
+            //     columns: table => new
+            //     {
+            //         Id = table.Column<int>(type: "int", nullable: false)
+            //             .Annotation("SqlServer:Identity", "1, 1"),
+            //         ProductItemId = table.Column<int>(type: "int", nullable: false),
+            //         SizeOptionsId = table.Column<int>(type: "int", nullable: false),
+            //         QuantityInStock = table.Column<int>(type: "int", nullable: false)
+            //     },
+            //     constraints: table =>
+            //     {
+            //         table.PrimaryKey("PK_ProductSizeVariations", x => new { x.Id, x.ProductItemId, x.SizeOptionsId });
+            //         table.ForeignKey(
+            //             name: "FK_ProductSizeVariations_ProductItems_ProductItemId",
+            //             column: x => x.ProductItemId,
+            //             principalTable: "ProductItems",
+            //             principalColumn: "Id",
+            //             onDelete: ReferentialAction.Cascade);
+            //         table.ForeignKey(
+            //             name: "FK_ProductSizeVariations_SizeOptions_SizeOptionsId",
+            //             column: x => x.SizeOptionsId,
+            //             principalTable: "SizeOptions",
+            //             principalColumn: "Id",
+            //             onDelete: ReferentialAction.Cascade);
+            //     });
 
             // migrationBuilder.CreateIndex(
             //     name: "IX_Colors_ColorHexCode",
@@ -255,12 +255,18 @@ namespace api.Migrations
             //     name: "IX_ProductAttributeOptions_ProductAttributeTypeId",
             //     table: "ProductAttributeOptions",
             //     column: "ProductAttributeTypeId");
-            //
-            // migrationBuilder.CreateIndex(
-            //     name: "IX_ProductAttributes_ProductAttributeOptionId",
-            //     table: "ProductAttributes",
-            //     column: "ProductAttributeOptionId");
-            //
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ProductAttributes_ProductAttributeOptionId",
+                table: "ProductAttributes",
+                column: "ProductAttributeOptionId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ProductAttributes_ProductId_ProductAttributeOptionId",
+                table: "ProductAttributes",
+                columns: new[] { "ProductId", "ProductAttributeOptionId" },
+                unique: true);
+
             // migrationBuilder.CreateIndex(
             //     name: "IX_ProductAttributeTypes_AttributeName",
             //     table: "ProductAttributeTypes",
@@ -296,17 +302,18 @@ namespace api.Migrations
             //     name: "IX_Products_ProductCategoryId",
             //     table: "Products",
             //     column: "ProductCategoryId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_ProductSizeVariations_ProductItemId",
-                table: "ProductSizeVariations",
-                column: "ProductItemId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_ProductSizeVariations_SizeOptionsId",
-                table: "ProductSizeVariations",
-                column: "SizeOptionsId");
-
+            //
+            // migrationBuilder.CreateIndex(
+            //     name: "IX_ProductSizeVariations_ProductItemId_SizeOptionsId",
+            //     table: "ProductSizeVariations",
+            //     columns: new[] { "ProductItemId", "SizeOptionsId" },
+            //     unique: true);
+            //
+            // migrationBuilder.CreateIndex(
+            //     name: "IX_ProductSizeVariations_SizeOptionsId",
+            //     table: "ProductSizeVariations",
+            //     column: "SizeOptionsId");
+            //
             // migrationBuilder.CreateIndex(
             //     name: "IX_SizeOptions_SizeCategoryId",
             //     table: "SizeOptions",

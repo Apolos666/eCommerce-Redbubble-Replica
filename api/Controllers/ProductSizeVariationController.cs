@@ -66,6 +66,9 @@ public class ProductSizeVariationController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<GetProductSizeVariation>> AddProductSizeVariation([FromBody] AddProductSizeVariation addProductSizeVariation)
     {
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+        
         var (productSizeVariation, getProductSizeVariation) = await _productSizeVariationRepository.Create(addProductSizeVariation);
 
         return CreatedAtAction(nameof(GetProductSizeVariationById), new { id = productSizeVariation.Id }, getProductSizeVariation);

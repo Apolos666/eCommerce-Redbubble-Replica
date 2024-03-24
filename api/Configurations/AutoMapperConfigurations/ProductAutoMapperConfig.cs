@@ -9,6 +9,7 @@ public class ProductAutoMapperConfig : Profile
     public ProductAutoMapperConfig()
     {
         CreateMap<Product, GetProduct>();
+        CreateMap<Product, ProductDTO>();
         CreateMap<AddProduct, Product>();
     }
 }

@@ -3,6 +3,7 @@ using api.Data;
 using api.Repositories.AttributeTypeModel;
 using api.Repositories.ColorModel;
 using api.Repositories.Product;
+using api.Repositories.ProductAttributeModel;
 using api.Repositories.ProductAttributeOptionModel;
 using api.Repositories.ProductCategory;
 using api.Repositories.ProductImage;
@@ -40,7 +41,8 @@ builder.Services.AddScoped<IProductCategoryRepository, ProductCategoryRepository
     .AddScoped<IProductImageRepository, ProductImageRepository>()
     .AddScoped<ISizeCategoryRepository, SizeCategoryRepository>()
     .AddScoped<ISizeOptionRepository, SizeOptionRepository>()
-    .AddScoped<IProductSizeVariationRepository, ProductSizeVariationRepository>();
+    .AddScoped<IProductSizeVariationRepository, ProductSizeVariationRepository>()
+    .AddScoped<IProductAttributeRepository, ProductAttributeRepository>();
 
 var app = builder.Build();
 

@@ -9,6 +9,7 @@ public class ProductAttributeOptionAutoMapperConfig : Profile
     public ProductAttributeOptionAutoMapperConfig()
     {
         CreateMap<ProductAttributeOption, GetProductAttributeOption>();
+        CreateMap<ProductAttributeOption, ProductAttributeOptionDTO>();
         CreateMap<AddProductAttributeOption, ProductAttributeOption>();
     }
 }

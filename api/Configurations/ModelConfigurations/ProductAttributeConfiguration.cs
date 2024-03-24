@@ -8,7 +8,9 @@ public class ProductAttributeConfiguration : IEntityTypeConfiguration<ProductAtt
 {
     public void Configure(EntityTypeBuilder<ProductAttribute> builder)
     {
-        builder.HasKey(pa => new { pa.ProductId, pa.ProductAttributeOptionId });
+        builder.HasKey(pa => new { pa.Id ,pa.ProductId, pa.ProductAttributeOptionId });
+        builder.HasIndex(pa => new { pa.ProductId, pa.ProductAttributeOptionId }).IsUnique();
+        builder.Property(pa => pa.Id).ValueGeneratedOnAdd();
         
         builder.HasOne(pa => pa.Product)
             .WithMany(p => p.ProductAttributes)

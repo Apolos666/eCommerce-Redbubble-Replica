@@ -76,18 +76,24 @@ namespace api.Migrations
 
             modelBuilder.Entity("api.Models.ProductAttribute", b =>
                 {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
                     b.Property<int>("ProductId")
                         .HasColumnType("int");
 
                     b.Property<int>("ProductAttributeOptionId")
                         .HasColumnType("int");
 
-                    b.Property<int>("Id")
-                        .HasColumnType("int");
-
-                    b.HasKey("ProductId", "ProductAttributeOptionId");
+                    b.HasKey("Id", "ProductId", "ProductAttributeOptionId");
 
                     b.HasIndex("ProductAttributeOptionId");
+
+                    b.HasIndex("ProductId", "ProductAttributeOptionId")
+                        .IsUnique();
 
                     b.ToTable("ProductAttributes");
                 });
@@ -243,9 +249,10 @@ namespace api.Migrations
 
                     b.HasKey("Id", "ProductItemId", "SizeOptionsId");
 
-                    b.HasIndex("ProductItemId");
-
                     b.HasIndex("SizeOptionsId");
+
+                    b.HasIndex("ProductItemId", "SizeOptionsId")
+                        .IsUnique();
 
                     b.ToTable("ProductSizeVariations");
                 });
