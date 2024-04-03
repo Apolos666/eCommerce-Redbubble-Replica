@@ -11,6 +11,7 @@ using api.Repositories.ProductItem;
 using api.Repositories.ProductSizeVariation;
 using api.Repositories.SizeCategory;
 using api.Repositories.SizeOption;
+using api.Services;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -18,31 +19,14 @@ var builder = WebApplication.CreateBuilder(args);
 var dbConfig = new DatabaseConfig();
 builder.Configuration.GetSection("DatabaseConfig").Bind(dbConfig);
 
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
-{
-    options.UseSqlServer(dbConfig.ConnectionString);
-    options.EnableDetailedErrors(dbConfig.DetailedErrors); // DetailedErrors is true in development
-    options.EnableSensitiveDataLogging(dbConfig.SensitiveDataLogging); // SensitiveDataLogging is true in development
-});
-builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+builder.Services.AddApplicationServices(dbConfig);
+builder.Services.AddApplicationIdentity();
+builder.Services.AddThirdPartyServices();
 
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
 builder.Services.AddControllers();
 builder.Services.AddProblemDetails();
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
-
-builder.Services.AddScoped<IProductCategoryRepository, ProductCategoryRepository>()
-    .AddScoped<IColorModelRepository, ColorModelRepository>()
-    .AddScoped<IProductAttributeTypeRepository, ProductAttributeTypeRepository>()
-    .AddScoped<IProductAttributeOptionRepository, ProductAttributeOptionRepository>()
-    .AddScoped<IProductRepository, ProductRepository>()
-    .AddScoped<IProductItemRepository, ProductItemRepository>()
-    .AddScoped<IProductImageRepository, ProductImageRepository>()
-    .AddScoped<ISizeCategoryRepository, SizeCategoryRepository>()
-    .AddScoped<ISizeOptionRepository, SizeOptionRepository>()
-    .AddScoped<IProductSizeVariationRepository, ProductSizeVariationRepository>()
-    .AddScoped<IProductAttributeRepository, ProductAttributeRepository>();
 
 var app = builder.Build();
 
