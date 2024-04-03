@@ -51,7 +51,7 @@ namespace api.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Country",
+                name: "Countries",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -60,7 +60,7 @@ namespace api.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Country", x => x.Id);
+                    table.PrimaryKey("PK_Countries", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -77,7 +77,7 @@ namespace api.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "PaymentType",
+                name: "PaymentTypes",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -86,11 +86,11 @@ namespace api.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_PaymentType", x => x.Id);
+                    table.PrimaryKey("PK_PaymentTypes", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
-                name: "ShippingMethod",
+                name: "ShippingMethods",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -100,7 +100,7 @@ namespace api.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ShippingMethod", x => x.Id);
+                    table.PrimaryKey("PK_ShippingMethods", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -210,7 +210,7 @@ namespace api.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "ShoppingCart",
+                name: "ShoppingCarts",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -219,9 +219,9 @@ namespace api.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ShoppingCart", x => x.Id);
+                    table.PrimaryKey("PK_ShoppingCarts", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_ShoppingCart_AspNetUsers_IdentityUserId",
+                        name: "FK_ShoppingCarts_AspNetUsers_IdentityUserId",
                         column: x => x.IdentityUserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
@@ -229,7 +229,7 @@ namespace api.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "AddressModel",
+                name: "AddressModels",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -245,17 +245,17 @@ namespace api.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_AddressModel", x => x.Id);
+                    table.PrimaryKey("PK_AddressModels", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_AddressModel_Country_CountryId",
+                        name: "FK_AddressModels_Countries_CountryId",
                         column: x => x.CountryId,
-                        principalTable: "Country",
+                        principalTable: "Countries",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "UserPaymentMethod",
+                name: "UserPaymentMethods",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -269,23 +269,23 @@ namespace api.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_UserPaymentMethod", x => x.Id);
+                    table.PrimaryKey("PK_UserPaymentMethods", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_UserPaymentMethod_AspNetUsers_IdentityUserId",
+                        name: "FK_UserPaymentMethods_AspNetUsers_IdentityUserId",
                         column: x => x.IdentityUserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_UserPaymentMethod_PaymentType_PaymentTypeId",
+                        name: "FK_UserPaymentMethods_PaymentTypes_PaymentTypeId",
                         column: x => x.PaymentTypeId,
-                        principalTable: "PaymentType",
+                        principalTable: "PaymentTypes",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "ShoppingCartItem",
+                name: "ShoppingCartItems",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -296,23 +296,23 @@ namespace api.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ShoppingCartItem", x => x.Id);
+                    table.PrimaryKey("PK_ShoppingCartItems", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_ShoppingCartItem_ProductItems_ProductItemId",
+                        name: "FK_ShoppingCartItems_ProductItems_ProductItemId",
                         column: x => x.ProductItemId,
                         principalTable: "ProductItems",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_ShoppingCartItem_ShoppingCart_cartId",
+                        name: "FK_ShoppingCartItems_ShoppingCarts_cartId",
                         column: x => x.cartId,
-                        principalTable: "ShoppingCart",
+                        principalTable: "ShoppingCarts",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "UserAddress",
+                name: "UserAddresses",
                 columns: table => new
                 {
                     IdentityUserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
@@ -321,15 +321,15 @@ namespace api.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_UserAddress", x => new { x.IdentityUserId, x.AddressModelId });
+                    table.PrimaryKey("PK_UserAddresses", x => new { x.IdentityUserId, x.AddressModelId });
                     table.ForeignKey(
-                        name: "FK_UserAddress_AddressModel_AddressModelId",
+                        name: "FK_UserAddresses_AddressModels_AddressModelId",
                         column: x => x.AddressModelId,
-                        principalTable: "AddressModel",
+                        principalTable: "AddressModels",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_UserAddress_AspNetUsers_IdentityUserId",
+                        name: "FK_UserAddresses_AspNetUsers_IdentityUserId",
                         column: x => x.IdentityUserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
@@ -337,7 +337,7 @@ namespace api.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "ShopOrder",
+                name: "ShopOrders",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -352,41 +352,40 @@ namespace api.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ShopOrder", x => x.Id);
+                    table.PrimaryKey("PK_ShopOrders", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_ShopOrder_AddressModel_ShippingAdressId",
+                        name: "FK_ShopOrders_AddressModels_ShippingAdressId",
                         column: x => x.ShippingAdressId,
-                        principalTable: "AddressModel",
+                        principalTable: "AddressModels",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_ShopOrder_AspNetUsers_IdentityUserId",
+                        name: "FK_ShopOrders_AspNetUsers_IdentityUserId",
                         column: x => x.IdentityUserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_ShopOrder_OrderStatus_OrderStatusId",
+                        name: "FK_ShopOrders_OrderStatus_OrderStatusId",
                         column: x => x.OrderStatusId,
                         principalTable: "OrderStatus",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_ShopOrder_ShippingMethod_ShippingMethodId",
+                        name: "FK_ShopOrders_ShippingMethods_ShippingMethodId",
                         column: x => x.ShippingMethodId,
-                        principalTable: "ShippingMethod",
+                        principalTable: "ShippingMethods",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_ShopOrder_UserPaymentMethod_PaymentMethodId",
+                        name: "FK_ShopOrders_UserPaymentMethods_PaymentMethodId",
                         column: x => x.PaymentMethodId,
-                        principalTable: "UserPaymentMethod",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalTable: "UserPaymentMethods",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
-                name: "OrderLine",
+                name: "OrderLines",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -398,23 +397,23 @@ namespace api.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_OrderLine", x => x.Id);
+                    table.PrimaryKey("PK_OrderLines", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_OrderLine_ProductItems_ProductItemId",
+                        name: "FK_OrderLines_ProductItems_ProductItemId",
                         column: x => x.ProductItemId,
                         principalTable: "ProductItems",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_OrderLine_ShopOrder_ShopOrderId",
+                        name: "FK_OrderLines_ShopOrders_ShopOrderId",
                         column: x => x.ShopOrderId,
-                        principalTable: "ShopOrder",
+                        principalTable: "ShopOrders",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "UserReview",
+                name: "UserReviews",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -426,24 +425,23 @@ namespace api.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_UserReview", x => x.Id);
+                    table.PrimaryKey("PK_UserReviews", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_UserReview_AspNetUsers_IdentityUserId",
+                        name: "FK_UserReviews_AspNetUsers_IdentityUserId",
                         column: x => x.IdentityUserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_UserReview_OrderLine_OrderLineId",
+                        name: "FK_UserReviews_OrderLines_OrderLineId",
                         column: x => x.OrderLineId,
-                        principalTable: "OrderLine",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalTable: "OrderLines",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_AddressModel_CountryId",
-                table: "AddressModel",
+                name: "IX_AddressModels_CountryId",
+                table: "AddressModels",
                 column: "CountryId");
 
             migrationBuilder.CreateIndex(
@@ -486,84 +484,84 @@ namespace api.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
-                name: "IX_OrderLine_ProductItemId",
-                table: "OrderLine",
+                name: "IX_OrderLines_ProductItemId",
+                table: "OrderLines",
                 column: "ProductItemId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_OrderLine_ShopOrderId",
-                table: "OrderLine",
+                name: "IX_OrderLines_ShopOrderId",
+                table: "OrderLines",
                 column: "ShopOrderId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ShopOrder_IdentityUserId",
-                table: "ShopOrder",
+                name: "IX_ShopOrders_IdentityUserId",
+                table: "ShopOrders",
                 column: "IdentityUserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ShopOrder_OrderStatusId",
-                table: "ShopOrder",
+                name: "IX_ShopOrders_OrderStatusId",
+                table: "ShopOrders",
                 column: "OrderStatusId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ShopOrder_PaymentMethodId",
-                table: "ShopOrder",
+                name: "IX_ShopOrders_PaymentMethodId",
+                table: "ShopOrders",
                 column: "PaymentMethodId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ShopOrder_ShippingAdressId",
-                table: "ShopOrder",
+                name: "IX_ShopOrders_ShippingAdressId",
+                table: "ShopOrders",
                 column: "ShippingAdressId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ShopOrder_ShippingMethodId",
-                table: "ShopOrder",
+                name: "IX_ShopOrders_ShippingMethodId",
+                table: "ShopOrders",
                 column: "ShippingMethodId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ShoppingCart_IdentityUserId",
-                table: "ShoppingCart",
-                column: "IdentityUserId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_ShoppingCartItem_cartId",
-                table: "ShoppingCartItem",
+                name: "IX_ShoppingCartItems_cartId",
+                table: "ShoppingCartItems",
                 column: "cartId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ShoppingCartItem_ProductItemId",
-                table: "ShoppingCartItem",
+                name: "IX_ShoppingCartItems_ProductItemId",
+                table: "ShoppingCartItems",
                 column: "ProductItemId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserAddress_AddressModelId",
-                table: "UserAddress",
+                name: "IX_ShoppingCarts_IdentityUserId",
+                table: "ShoppingCarts",
+                column: "IdentityUserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserAddresses_AddressModelId",
+                table: "UserAddresses",
                 column: "AddressModelId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserAddress_IdentityUserId_AddressModelId",
-                table: "UserAddress",
+                name: "IX_UserAddresses_IdentityUserId_AddressModelId",
+                table: "UserAddresses",
                 columns: new[] { "IdentityUserId", "AddressModelId" },
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserPaymentMethod_IdentityUserId",
-                table: "UserPaymentMethod",
+                name: "IX_UserPaymentMethods_IdentityUserId",
+                table: "UserPaymentMethods",
                 column: "IdentityUserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserPaymentMethod_PaymentTypeId",
-                table: "UserPaymentMethod",
+                name: "IX_UserPaymentMethods_PaymentTypeId",
+                table: "UserPaymentMethods",
                 column: "PaymentTypeId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserReview_IdentityUserId",
-                table: "UserReview",
+                name: "IX_UserReviews_IdentityUserId",
+                table: "UserReviews",
                 column: "IdentityUserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserReview_OrderLineId",
-                table: "UserReview",
+                name: "IX_UserReviews_OrderLineId",
+                table: "UserReviews",
                 column: "OrderLineId");
         }
 
@@ -586,46 +584,46 @@ namespace api.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "ShoppingCartItem");
+                name: "ShoppingCartItems");
 
             migrationBuilder.DropTable(
-                name: "UserAddress");
+                name: "UserAddresses");
 
             migrationBuilder.DropTable(
-                name: "UserReview");
+                name: "UserReviews");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
-                name: "ShoppingCart");
+                name: "ShoppingCarts");
 
             migrationBuilder.DropTable(
-                name: "OrderLine");
+                name: "OrderLines");
 
             migrationBuilder.DropTable(
-                name: "ShopOrder");
+                name: "ShopOrders");
 
             migrationBuilder.DropTable(
-                name: "AddressModel");
+                name: "AddressModels");
 
             migrationBuilder.DropTable(
                 name: "OrderStatus");
 
             migrationBuilder.DropTable(
-                name: "ShippingMethod");
+                name: "ShippingMethods");
 
             migrationBuilder.DropTable(
-                name: "UserPaymentMethod");
+                name: "UserPaymentMethods");
 
             migrationBuilder.DropTable(
-                name: "Country");
+                name: "Countries");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
 
             migrationBuilder.DropTable(
-                name: "PaymentType");
+                name: "PaymentTypes");
         }
     }
 }

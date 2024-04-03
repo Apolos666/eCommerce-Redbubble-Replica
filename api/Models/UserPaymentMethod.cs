@@ -32,4 +32,6 @@ public class UserPaymentMethod
 
     [Required]
     public bool IsDefault { get; set; }
+
+    public ICollection<ShopOrder> ShopOrders { get; set; }
 }

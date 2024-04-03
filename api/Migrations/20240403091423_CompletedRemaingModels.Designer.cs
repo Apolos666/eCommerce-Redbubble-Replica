@@ -12,7 +12,7 @@ using api.Data;
 namespace api.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240403085517_CompletedRemaingModels")]
+    [Migration("20240403091423_CompletedRemaingModels")]
     partial class CompletedRemaingModels
     {
         /// <inheritdoc />
@@ -209,7 +209,7 @@ namespace api.Migrations
 
                     b.HasIndex("CountryId");
 
-                    b.ToTable("AddressModel");
+                    b.ToTable("AddressModels");
                 });
 
             modelBuilder.Entity("api.Models.ColorModel", b =>
@@ -253,7 +253,7 @@ namespace api.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Country");
+                    b.ToTable("Countries");
                 });
 
             modelBuilder.Entity("api.Models.Identity.ApplicationIdentityUser", b =>
@@ -348,7 +348,7 @@ namespace api.Migrations
 
                     b.HasIndex("ShopOrderId");
 
-                    b.ToTable("OrderLine");
+                    b.ToTable("OrderLines");
                 });
 
             modelBuilder.Entity("api.Models.OrderStatus", b =>
@@ -382,7 +382,7 @@ namespace api.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("PaymentType");
+                    b.ToTable("PaymentTypes");
                 });
 
             modelBuilder.Entity("api.Models.Product", b =>
@@ -611,7 +611,7 @@ namespace api.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("ShippingMethod");
+                    b.ToTable("ShippingMethods");
                 });
 
             modelBuilder.Entity("api.Models.ShopOrder", b =>
@@ -656,7 +656,7 @@ namespace api.Migrations
 
                     b.HasIndex("ShippingMethodId");
 
-                    b.ToTable("ShopOrder");
+                    b.ToTable("ShopOrders");
                 });
 
             modelBuilder.Entity("api.Models.ShoppingCart", b =>
@@ -675,7 +675,7 @@ namespace api.Migrations
 
                     b.HasIndex("IdentityUserId");
 
-                    b.ToTable("ShoppingCart");
+                    b.ToTable("ShoppingCarts");
                 });
 
             modelBuilder.Entity("api.Models.ShoppingCartItem", b =>
@@ -701,7 +701,7 @@ namespace api.Migrations
 
                     b.HasIndex("cartId");
 
-                    b.ToTable("ShoppingCartItem");
+                    b.ToTable("ShoppingCartItems");
                 });
 
             modelBuilder.Entity("api.Models.SizeCategory", b =>
@@ -764,7 +764,7 @@ namespace api.Migrations
                     b.HasIndex("IdentityUserId", "AddressModelId")
                         .IsUnique();
 
-                    b.ToTable("UserAddress");
+                    b.ToTable("UserAddresses");
                 });
 
             modelBuilder.Entity("api.Models.UserPaymentMethod", b =>
@@ -804,7 +804,7 @@ namespace api.Migrations
 
                     b.HasIndex("PaymentTypeId");
 
-                    b.ToTable("UserPaymentMethod");
+                    b.ToTable("UserPaymentMethods");
                 });
 
             modelBuilder.Entity("api.Models.UserReview", b =>
@@ -835,7 +835,7 @@ namespace api.Migrations
 
                     b.HasIndex("OrderLineId");
 
-                    b.ToTable("UserReview");
+                    b.ToTable("UserReviews");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -1042,9 +1042,9 @@ namespace api.Migrations
                         .IsRequired();
 
                     b.HasOne("api.Models.UserPaymentMethod", "PaymentMethod")
-                        .WithMany()
+                        .WithMany("ShopOrders")
                         .HasForeignKey("PaymentMethodId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("api.Models.AddressModel", "ShippingAddress")
@@ -1160,7 +1160,7 @@ namespace api.Migrations
                     b.HasOne("api.Models.OrderLine", "OrderLine")
                         .WithMany("UserReviews")
                         .HasForeignKey("OrderLineId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("IdentityUser");
@@ -1257,6 +1257,11 @@ namespace api.Migrations
             modelBuilder.Entity("api.Models.SizeOption", b =>
                 {
                     b.Navigation("ProductSizeVariations");
+                });
+
+            modelBuilder.Entity("api.Models.UserPaymentMethod", b =>
+                {
+                    b.Navigation("ShopOrders");
                 });
 #pragma warning restore 612, 618
         }
