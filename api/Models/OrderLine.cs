@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore;
 
 namespace api.Models;
 
@@ -21,6 +22,7 @@ public class OrderLine
     [Required]
     public int Quantity { get; set; }
     [Required]
+    [Precision(18, 2)]
     public decimal Price { get; set; }
 
     public ICollection<UserReview> UserReviews { get; set; }

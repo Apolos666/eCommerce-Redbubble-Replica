@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using api.Models.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace api.Models;
 
@@ -11,7 +12,7 @@ public class UserReview
 
     [Required]
     [ForeignKey("IdentityUser")]
-    public int IdentityUserId { get; set; }
+    public string IdentityUserId { get; set; }
     public ApplicationIdentityUser IdentityUser { get; set; }
     
     [Required]
@@ -21,6 +22,7 @@ public class UserReview
 
     [Required]
     [Range(0, 5)]
+    [Precision(3, 2)]
     public decimal Rating { get; set; }
 
     public string? Comment { get; set; }

@@ -11,7 +11,7 @@ public class UserPaymentMethod
     
     [Required]
     [ForeignKey("IdentityUser")]
-    public int IdentityUserId { get; set; }
+    public string IdentityUserId { get; set; }
     public ApplicationIdentityUser IdentityUser { get; set; }
 
     [Required]

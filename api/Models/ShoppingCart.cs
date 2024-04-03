@@ -10,6 +10,6 @@ public class ShoppingCart
     public int Id { get; set; }
     
     [ForeignKey("IdentityUser")]
-    public int IdentityUserId { get; set; }
+    public string IdentityUserId { get; set; }
     public ApplicationIdentityUser IdentityUser { get; set; }
 }
