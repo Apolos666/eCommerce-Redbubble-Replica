@@ -1,11 +1,12 @@
 ﻿using api.Configurations;
 using api.Models;
+using api.Models.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace api.Data;
 
-public class ApplicationDbContext : IdentityDbContext
+public class ApplicationDbContext : IdentityDbContext<ApplicationIdentityUser>
 {
     public DbSet<ProductCategory> ProductCategories { get; set; }
     public DbSet<Product> Products { get; set; }
@@ -19,7 +20,7 @@ public class ApplicationDbContext : IdentityDbContext
     public DbSet<SizeCategory> SizeCategories { get; set; }
     public DbSet<SizeOption> SizeOptions { get; set; }
     
-    public ApplicationDbContext(DbContextOptions options) : base(options)
+    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
     {
     }
 
@@ -33,5 +34,6 @@ public class ApplicationDbContext : IdentityDbContext
         modelBuilder.ApplyConfiguration(new SizeOptionConfiguration());
         modelBuilder.ApplyConfiguration(new ProductSizeVariationConfiguration());
         modelBuilder.ApplyConfiguration(new ProductAttributeConfiguration());
+        modelBuilder.ApplyConfiguration(new UserAddressConfiguration());
     }
 }

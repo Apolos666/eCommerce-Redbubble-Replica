@@ -1,5 +1,6 @@
 ﻿using api.Configurations;
 using api.Data;
+using api.Models.Identity;
 using api.Repositories.AttributeTypeModel;
 using api.Repositories.ColorModel;
 using api.Repositories.Product;
@@ -45,7 +46,7 @@ public static class ServiceRegistration
     
     public static IdentityBuilder AddApplicationIdentity(this IServiceCollection services)
     {
-        return services.AddDefaultIdentity<IdentityUser>(options =>
+        return services.AddDefaultIdentity<ApplicationIdentityUser>(options =>
             {
                 // Sign in settings
                 options.SignIn.RequireConfirmedAccount = true;

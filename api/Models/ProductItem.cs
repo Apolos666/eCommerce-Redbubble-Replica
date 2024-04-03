@@ -21,4 +21,5 @@ public class ProductItem
     public ColorModel ColorModel { get; set; }
     public ICollection<ProductSizeVariation> ProductSizeVariations { get; set; }
     public ICollection<ProductImage> ProductImages { get; set; }
+    public ICollection<ShoppingCartItem> ShoppingCartItems { get; set; }
 }
