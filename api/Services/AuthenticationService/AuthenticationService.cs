@@ -56,7 +56,7 @@ public class AuthenticationService : IAuthenticationService
     
     private async Task<List<Claim>> GetClaims(string userEmail)
     {
-        var user = await _userManager.FindByNameAsync(userEmail); 
+        var user = await _userManager.FindByEmailAsync(userEmail); 
 
         var claims = new List<Claim>()
         {

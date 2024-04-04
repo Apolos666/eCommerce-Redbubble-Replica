@@ -32,9 +32,10 @@ public static class ServiceRegistration
         {
             options.UseSqlServer(databaseConfig.ConnectionString);
             options.EnableDetailedErrors(databaseConfig.DetailedErrors); // DetailedErrors is true in development
-            options.EnableSensitiveDataLogging(databaseConfig.SensitiveDataLogging); // SensitiveDataLogging is true in development
+            options.EnableSensitiveDataLogging(databaseConfig
+                .SensitiveDataLogging); // SensitiveDataLogging is true in development
         });
-        
+
         service.AddScoped<IProductCategoryRepository, ProductCategoryRepository>()
             .AddScoped<IColorModelRepository, ColorModelRepository>()
             .AddScoped<IProductAttributeTypeRepository, ProductAttributeTypeRepository>()
@@ -46,24 +47,24 @@ public static class ServiceRegistration
             .AddScoped<ISizeOptionRepository, SizeOptionRepository>()
             .AddScoped<IProductSizeVariationRepository, ProductSizeVariationRepository>()
             .AddScoped<IProductAttributeRepository, ProductAttributeRepository>();
-        
+
         return service;
     }
 
     public static IServiceCollection AddApplicationServices(this IServiceCollection service)
     {
         service.AddScoped<IAuthenticationService, AuthenticationService>();
-        
+
         return service;
     }
-    
+
     public static IdentityBuilder AddApplicationIdentity(this IServiceCollection services)
     {
         return services.AddDefaultIdentity<ApplicationIdentityUser>(options =>
             {
                 // Sign in settings
                 options.SignIn.RequireConfirmedAccount = true;
-                
+
                 // Password settings
                 options.Password.RequireDigit = false;
                 options.Password.RequireLowercase = false;
@@ -71,14 +72,15 @@ public static class ServiceRegistration
                 options.Password.RequireUppercase = false;
                 options.Password.RequiredLength = 3;
                 options.Password.RequiredUniqueChars = 0;
-                
+
                 // Lockout settings
                 options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(60);
                 options.Lockout.MaxFailedAccessAttempts = 5;
                 options.Lockout.AllowedForNewUsers = true;
-                
+
                 // User settings
-                options.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
+                options.User.AllowedUserNameCharacters =
+                    "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
                 options.User.RequireUniqueEmail = false;
             })
             .AddRoles<IdentityRole>()
@@ -88,24 +90,26 @@ public static class ServiceRegistration
     public static IServiceCollection AddApplicationJwtAuthentication(this IServiceCollection service,
         JwtConfiguration jwtConfig)
     {
-        service.AddAuthentication(options =>
-        {
-            options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-            options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-        }).AddJwtBearer(options =>
-        {
-            options.TokenValidationParameters = new TokenValidationParameters()
+        service
+            .AddAuthentication(options =>
             {
-                ValidateActor = true,
-                ValidateIssuer = true,
-                ValidateAudience = true,
-                RequireExpirationTime = true,
-                ValidateIssuerSigningKey = true,
-                ValidIssuer = jwtConfig.Issuer,
-                ValidAudience = jwtConfig.Audience,
-                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtConfig.Key))
-            };
-        });
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+            .AddJwtBearer(options =>
+            {
+                options.TokenValidationParameters = new TokenValidationParameters()
+                {
+                    ValidateActor = true,
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    RequireExpirationTime = true,
+                    ValidateIssuerSigningKey = true,
+                    ValidIssuer = jwtConfig.Issuer,
+                    ValidAudience = jwtConfig.Audience,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtConfig.Key))
+                };
+            });
 
         return service;
     }
@@ -114,12 +118,12 @@ public static class ServiceRegistration
     {
         return service;
     }
-    
+
     public static IServiceCollection AddThirdPartyServices(this IServiceCollection services)
     {
         services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
         services.AddSwaggerGen();
-        
+
         return services;
     }
 
@@ -133,23 +137,22 @@ public static class ServiceRegistration
 
             if (!userManager.Users.Any())
             {
-                if (await applicationDbContext.Database.EnsureCreatedAsync())
-                {
-                    // Creating User Entities
-                    var adminUser = new ApplicationIdentityUser() { UserName = "admin", Email = "admin@test.com" };
-                    var contributorUser = new ApplicationIdentityUser() { UserName = "cont", Email = "c@test.com" };
-                    var user = new ApplicationIdentityUser() { UserName = "user", Email = "user@test.com" };
-                    
-                    // Adding Users with Password
-                    await userManager.CreateAsync(adminUser, "123");
-                    await userManager.CreateAsync(contributorUser, "123");
-                    await userManager.CreateAsync(user, "123");
-                    
-                    // Ading Claims to Users
-                    await userManager.AddClaimAsync(adminUser, AuthorizationHelper.GetAdminClaims(TypeSafe.Controller.Student));
-                    await userManager.AddClaimAsync(contributorUser, AuthorizationHelper.GetcontributorClaims(TypeSafe.Controller.Student));
-                    await userManager.AddClaimAsync(user, AuthorizationHelper.GetUserClaims(TypeSafe.Controller.Student));
-                }
+                // Creating User Entities
+                var adminUser = new ApplicationIdentityUser() { UserName = "admin", Email = "admin@test.com" };
+                var contributorUser = new ApplicationIdentityUser() { UserName = "cont", Email = "c@test.com" };
+                var user = new ApplicationIdentityUser() { UserName = "user", Email = "user@test.com" };
+
+                // Adding Users with Password
+                await userManager.CreateAsync(adminUser, "1234");
+                await userManager.CreateAsync(contributorUser, "1234");
+                await userManager.CreateAsync(user, "1234");
+
+                // Ading Claims to Users
+                await userManager.AddClaimAsync(adminUser,
+                    AuthorizationHelper.GetAdminClaims(TypeSafe.Controller.Student));
+                await userManager.AddClaimAsync(contributorUser,
+                    AuthorizationHelper.GetcontributorClaims(TypeSafe.Controller.Student));
+                await userManager.AddClaimAsync(user, AuthorizationHelper.GetUserClaims(TypeSafe.Controller.Student));
             }
         }
 
