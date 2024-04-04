@@ -1,6 +1,8 @@
-﻿using api.Configurations;
+﻿using System.Text;
+using api.Configurations;
 using api.Data;
 using api.Models.Identity;
+using api.Models.Identity.Authentication;
 using api.Repositories.AttributeTypeModel;
 using api.Repositories.ColorModel;
 using api.Repositories.Product;
@@ -12,8 +14,10 @@ using api.Repositories.ProductItem;
 using api.Repositories.ProductSizeVariation;
 using api.Repositories.SizeCategory;
 using api.Repositories.SizeOption;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 
 namespace api.Services;
 
@@ -70,6 +74,31 @@ public static class ServiceRegistration
             })
             .AddRoles<IdentityRole>()
             .AddEntityFrameworkStores<ApplicationDbContext>();
+    }
+
+    public static IServiceCollection AddApplicationJwtAuthentication(this IServiceCollection service,
+        JwtConfiguration jwtConfig)
+    {
+        service.AddAuthentication(options =>
+        {
+            options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+            options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+        }).AddJwtBearer(options =>
+        {
+            options.TokenValidationParameters = new TokenValidationParameters()
+            {
+                ValidateActor = true,
+                ValidateIssuer = true,
+                ValidateAudience = true,
+                RequireExpirationTime = true,
+                ValidateIssuerSigningKey = true,
+                ValidIssuer = jwtConfig.Issuer,
+                ValidAudience = jwtConfig.Audience,
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtConfig.Key))
+            };
+        });
+
+        return service;
     }
     
     public static IServiceCollection AddThirdPartyServices(this IServiceCollection services)
