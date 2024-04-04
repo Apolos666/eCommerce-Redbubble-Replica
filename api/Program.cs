@@ -1,19 +1,6 @@
 using api.Configurations;
-using api.Data;
 using api.Models.Identity.Authentication;
-using api.Repositories.AttributeTypeModel;
-using api.Repositories.ColorModel;
-using api.Repositories.Product;
-using api.Repositories.ProductAttributeModel;
-using api.Repositories.ProductAttributeOptionModel;
-using api.Repositories.ProductCategory;
-using api.Repositories.ProductImage;
-using api.Repositories.ProductItem;
-using api.Repositories.ProductSizeVariation;
-using api.Repositories.SizeCategory;
-using api.Repositories.SizeOption;
 using api.Services;
-using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,10 +9,13 @@ builder.Configuration.GetSection("DatabaseConfig").Bind(dbConfig);
 
 var jwtConfig = new JwtConfiguration();
 builder.Configuration.GetSection("JwtConfig").Bind(jwtConfig);
+builder.Services.AddSingleton(jwtConfig);
 
-builder.Services.AddApplicationServices(dbConfig);
+builder.Services.AddApplicationRepositories(dbConfig);
+builder.Services.AddApplicationServices();
 builder.Services.AddApplicationIdentity();
 builder.Services.AddApplicationJwtAuthentication(jwtConfig);
+builder.Services.AddApplicationAuthorization();
 builder.Services.AddThirdPartyServices();
 
 builder.Services.AddEndpointsApiExplorer();
@@ -53,5 +43,7 @@ app.UseAuthorization();
 app.UseHttpsRedirection();
 
 app.MapControllers();
+
+await app.SeedDataAsync();
 
 app.Run();

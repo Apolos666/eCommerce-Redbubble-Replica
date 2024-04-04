@@ -9,7 +9,7 @@ public class TypeSafe
         public const string Contributor = "Contributor";
     }
 
-    public static class Contoller
+    public static class Controller
     {
         public const string Student = "Student";
         public const string Teacher = "Teacher";
@@ -23,7 +23,8 @@ public class TypeSafe
         public const int Read = 1;
         public const int Write = 2;
         public const int Update = 3;
-        public const int Delete = 4;
+        public const int Patch = 4;
+        public const int Delete = 5;
     }
 
     public static class Policies

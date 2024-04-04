@@ -1,8 +1,10 @@
 ﻿using System.Text;
 using api.Configurations;
 using api.Data;
+using api.Helper;
 using api.Models.Identity;
 using api.Models.Identity.Authentication;
+using api.Models.TypeSafe;
 using api.Repositories.AttributeTypeModel;
 using api.Repositories.ColorModel;
 using api.Repositories.Product;
@@ -23,7 +25,7 @@ namespace api.Services;
 
 public static class ServiceRegistration
 {
-    public static IServiceCollection AddApplicationServices(this IServiceCollection service,
+    public static IServiceCollection AddApplicationRepositories(this IServiceCollection service,
         DatabaseConfig? databaseConfig)
     {
         service.AddDbContext<ApplicationDbContext>(options =>
@@ -44,6 +46,13 @@ public static class ServiceRegistration
             .AddScoped<ISizeOptionRepository, SizeOptionRepository>()
             .AddScoped<IProductSizeVariationRepository, ProductSizeVariationRepository>()
             .AddScoped<IProductAttributeRepository, ProductAttributeRepository>();
+        
+        return service;
+    }
+
+    public static IServiceCollection AddApplicationServices(this IServiceCollection service)
+    {
+        service.AddScoped<IAuthenticationService, AuthenticationService>();
         
         return service;
     }
@@ -100,6 +109,11 @@ public static class ServiceRegistration
 
         return service;
     }
+
+    public static IServiceCollection AddApplicationAuthorization(this IServiceCollection service)
+    {
+        return service;
+    }
     
     public static IServiceCollection AddThirdPartyServices(this IServiceCollection services)
     {
@@ -107,5 +121,38 @@ public static class ServiceRegistration
         services.AddSwaggerGen();
         
         return services;
+    }
+
+    public static async Task<IApplicationBuilder> SeedDataAsync(this WebApplication app)
+    {
+        using (var scope = app.Services.CreateScope())
+        {
+            var applicationDbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+            var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationIdentityUser>>();
+            var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+
+            if (!userManager.Users.Any())
+            {
+                if (await applicationDbContext.Database.EnsureCreatedAsync())
+                {
+                    // Creating User Entities
+                    var adminUser = new ApplicationIdentityUser() { UserName = "admin", Email = "admin@test.com" };
+                    var contributorUser = new ApplicationIdentityUser() { UserName = "cont", Email = "c@test.com" };
+                    var user = new ApplicationIdentityUser() { UserName = "user", Email = "user@test.com" };
+                    
+                    // Adding Users with Password
+                    await userManager.CreateAsync(adminUser, "123");
+                    await userManager.CreateAsync(contributorUser, "123");
+                    await userManager.CreateAsync(user, "123");
+                    
+                    // Ading Claims to Users
+                    await userManager.AddClaimAsync(adminUser, AuthorizationHelper.GetAdminClaims(TypeSafe.Controller.Student));
+                    await userManager.AddClaimAsync(contributorUser, AuthorizationHelper.GetcontributorClaims(TypeSafe.Controller.Student));
+                    await userManager.AddClaimAsync(user, AuthorizationHelper.GetUserClaims(TypeSafe.Controller.Student));
+                }
+            }
+        }
+
+        return app;
     }
 }
