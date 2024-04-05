@@ -116,6 +116,44 @@ public static class ServiceRegistration
 
     public static IServiceCollection AddApplicationAuthorization(this IServiceCollection service)
     {
+        service.AddAuthorization(options =>
+        {
+            // Calim-based authorization
+            // StudentController
+            options.AddPolicy(TypeSafe.Policies.FullControlPolicy, policy =>
+            {
+                policy.RequireClaim(TypeSafe.Controller.Product);
+            });
+            
+            options.AddPolicy(TypeSafe.Policies.ReadAndWritePolicy, policy =>
+            {
+                policy.RequireClaim(TypeSafe.Controller.ProductItem,
+                    TypeSafe.Permissions.Read.ToString(),
+                    TypeSafe.Permissions.Write.ToString());
+            });
+            
+            // // Calim-based authorization using value
+            // // StudentController
+            // options.AddPolicy(TypeSafe.Policies.FullControlPolicy, policy =>
+            // {
+            //     policy.RequireClaim(TypeSafe.Controller.Student,
+            //         TypeSafe.Permissions.Delete.ToString(),
+            //         TypeSafe.Permissions.Update.ToString());
+            // });
+            //
+            // options.AddPolicy(TypeSafe.Policies.ReadAndWritePolicy, policy =>
+            // {
+            //     policy.RequireClaim(TypeSafe.Controller.Student,
+            //         TypeSafe.Permissions.Write.ToString());
+            // });
+            //
+            // options.AddPolicy(TypeSafe.Policies.ReadPolicy, policy =>
+            // {
+            //     policy.RequireClaim(TypeSafe.Controller.Student,
+            //         TypeSafe.Permissions.Read.ToString());
+            // });
+        });
+        
         return service;
     }
 
@@ -149,10 +187,10 @@ public static class ServiceRegistration
 
                 // Ading Claims to Users
                 await userManager.AddClaimAsync(adminUser,
-                    AuthorizationHelper.GetAdminClaims(TypeSafe.Controller.Student));
+                    AuthorizationHelper.GetAdminClaims(TypeSafe.Controller.Product));
                 await userManager.AddClaimAsync(contributorUser,
-                    AuthorizationHelper.GetcontributorClaims(TypeSafe.Controller.Student));
-                await userManager.AddClaimAsync(user, AuthorizationHelper.GetUserClaims(TypeSafe.Controller.Student));
+                    AuthorizationHelper.GetcontributorClaims(TypeSafe.Controller.Product));
+                await userManager.AddClaimAsync(user, AuthorizationHelper.GetUserClaims(TypeSafe.Controller.Product));
             }
         }
 

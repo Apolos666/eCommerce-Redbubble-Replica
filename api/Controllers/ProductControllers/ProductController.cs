@@ -1,11 +1,14 @@
 ﻿using api.DTOs.ProductDTOs;
+using api.Models.TypeSafe;
 using api.Repositories.Product;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace api.Controllers;
 
 [Route("api/[controller]s")]
 [ApiController]
+[Authorize(Policy = TypeSafe.Policies.FullControlPolicy)]
 public class ProductController : ControllerBase
 {
     private readonly IProductRepository _productRepository;

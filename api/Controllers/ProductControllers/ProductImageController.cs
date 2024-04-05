@@ -1,5 +1,7 @@
 ﻿using api.DTOs.ProductImage;
+using api.Models.TypeSafe;
 using api.Repositories.ProductImage;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace api.Controllers;

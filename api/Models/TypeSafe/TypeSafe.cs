@@ -11,8 +11,8 @@ public class TypeSafe
 
     public static class Controller
     {
-        public const string Student = "Student";
-        public const string Teacher = "Teacher";
+        public const string Product = "Product";
+        public const string ProductItem = "ProductItem";
         public const string Module = "Module";
         public const string ClassRoom = "ClassRoom";
     }
