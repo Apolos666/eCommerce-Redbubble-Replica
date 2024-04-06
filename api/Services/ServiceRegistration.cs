@@ -7,6 +7,7 @@ using api.Models.Identity.Authentication;
 using api.Models.TypeSafe;
 using api.Repositories.AttributeTypeModel;
 using api.Repositories.ColorModel;
+using api.Repositories.PaymentType;
 using api.Repositories.Product;
 using api.Repositories.ProductAttributeModel;
 using api.Repositories.ProductAttributeOptionModel;
@@ -46,7 +47,8 @@ public static class ServiceRegistration
             .AddScoped<ISizeCategoryRepository, SizeCategoryRepository>()
             .AddScoped<ISizeOptionRepository, SizeOptionRepository>()
             .AddScoped<IProductSizeVariationRepository, ProductSizeVariationRepository>()
-            .AddScoped<IProductAttributeRepository, ProductAttributeRepository>();
+            .AddScoped<IProductAttributeRepository, ProductAttributeRepository>()
+            .AddScoped<IPaymentTypeRepository, PaymentTypeRepository>();
 
         return service;
     }
@@ -70,7 +72,7 @@ public static class ServiceRegistration
                 options.Password.RequireLowercase = false;
                 options.Password.RequireNonAlphanumeric = false;
                 options.Password.RequireUppercase = false;
-                options.Password.RequiredLength = 3;
+                options.Password.RequiredLength = 6;
                 options.Password.RequiredUniqueChars = 0;
 
                 // Lockout settings
@@ -118,20 +120,25 @@ public static class ServiceRegistration
     {
         service.AddAuthorization(options =>
         {
+            options.AddPolicy(TypeSafe.Policies.PaymentTypePolicy, policy =>
+            {
+                policy.RequireRole(TypeSafe.Roles.Admin);
+                policy.RequireClaim(TypeSafe.Controller.PaymentType,
+                    TypeSafe.GetAdminPermissions());
+            });
+
             // Calim-based authorization
             // StudentController
-            options.AddPolicy(TypeSafe.Policies.FullControlPolicy, policy =>
-            {
-                policy.RequireClaim(TypeSafe.Controller.Product);
-            });
-            
+            options.AddPolicy(TypeSafe.Policies.FullControlPolicy,
+                policy => { policy.RequireClaim(TypeSafe.Controller.Product); });
+
             options.AddPolicy(TypeSafe.Policies.ReadAndWritePolicy, policy =>
             {
                 policy.RequireClaim(TypeSafe.Controller.ProductItem,
                     TypeSafe.Permissions.Read.ToString(),
                     TypeSafe.Permissions.Write.ToString());
             });
-            
+
             // // Calim-based authorization using value
             // // StudentController
             // options.AddPolicy(TypeSafe.Policies.FullControlPolicy, policy =>
@@ -153,7 +160,7 @@ public static class ServiceRegistration
             //         TypeSafe.Permissions.Read.ToString());
             // });
         });
-        
+
         return service;
     }
 
@@ -173,25 +180,47 @@ public static class ServiceRegistration
             var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationIdentityUser>>();
             var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
 
-            if (!userManager.Users.Any())
-            {
-                // Creating User Entities
-                var adminUser = new ApplicationIdentityUser() { UserName = "admin", Email = "admin@test.com" };
-                var contributorUser = new ApplicationIdentityUser() { UserName = "cont", Email = "c@test.com" };
-                var user = new ApplicationIdentityUser() { UserName = "user", Email = "user@test.com" };
+            // Delete all data in AspNetUserClaims, AspNetUsers, AspNetUserRoles
+            applicationDbContext.UserClaims.RemoveRange(applicationDbContext.UserClaims);
+            applicationDbContext.Users.RemoveRange(applicationDbContext.Users);
+            applicationDbContext.UserRoles.RemoveRange(applicationDbContext.UserRoles);
+            await applicationDbContext.SaveChangesAsync();
 
-                // Adding Users with Password
-                await userManager.CreateAsync(adminUser, "1234");
-                await userManager.CreateAsync(contributorUser, "1234");
-                await userManager.CreateAsync(user, "1234");
+            // if (!userManager.Users.Any())
+            // {
+            // Creating User Entities
+            var adminUser = new ApplicationIdentityUser() { UserName = "admin", Email = "admin@test.com" };
+            var contributorUser = new ApplicationIdentityUser() { UserName = "cont", Email = "c@test.com" };
+            var user = new ApplicationIdentityUser() { UserName = "user", Email = "user@test.com" };
 
-                // Ading Claims to Users
-                await userManager.AddClaimAsync(adminUser,
-                    AuthorizationHelper.GetAdminClaims(TypeSafe.Controller.Product));
-                await userManager.AddClaimAsync(contributorUser,
-                    AuthorizationHelper.GetcontributorClaims(TypeSafe.Controller.Product));
-                await userManager.AddClaimAsync(user, AuthorizationHelper.GetUserClaims(TypeSafe.Controller.Product));
-            }
+            // Creating Role Entities
+            var adminRole = new IdentityRole(TypeSafe.Roles.Admin);
+            var contributorRole = new IdentityRole(TypeSafe.Roles.Contributor);
+            var userRole = new IdentityRole(TypeSafe.Roles.User);
+
+            // Adding Roles
+            await roleManager.CreateAsync(adminRole);
+            await roleManager.CreateAsync(contributorRole);
+            await roleManager.CreateAsync(userRole);
+
+            // Adding Users with Password
+            await userManager.CreateAsync(adminUser, "123456");
+            await userManager.CreateAsync(contributorUser, "123456");
+            await userManager.CreateAsync(user, "123456");
+
+            // Ading Claims to Users
+            // Ading Claims to Users
+            await userManager.AddClaimAsync(adminUser,
+                AuthorizationHelper.GetAdminClaims(TypeSafe.Controller.PaymentType));
+            await userManager.AddClaimAsync(contributorUser,
+                AuthorizationHelper.GetcontributorClaims(TypeSafe.Controller.Product));
+            await userManager.AddClaimAsync(user, AuthorizationHelper.GetUserClaims(TypeSafe.Controller.Product));
+
+            // Adding Roles to Users
+            await userManager.AddToRoleAsync(adminUser, TypeSafe.Roles.Admin);
+            await userManager.AddToRoleAsync(contributorUser, TypeSafe.Roles.Contributor);
+            await userManager.AddToRoleAsync(user, TypeSafe.Roles.User);
+            // }
         }
 
         return app;

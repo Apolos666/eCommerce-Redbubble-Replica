@@ -64,15 +64,15 @@ public class AuthenticationService : IAuthenticationService
         };
 
         claims.AddRange(GetClaimsSeperated(await _userManager.GetClaimsAsync(user)));
-        // var roles = await _userManager.GetRolesAsync(user);
-        //
-        // foreach (var role in roles)
-        // {
-        //     claims.Add(new Claim(ClaimTypes.Role, role));
-        //
-        //     var identityRole = await _roleManager.FindByNameAsync(role);
-        //     claims.AddRange(GetClaimsSeperated(await _roleManager.GetClaimsAsync(identityRole)));
-        // }
+        var roles = await _userManager.GetRolesAsync(user);
+        
+        foreach (var role in roles)
+        {
+            claims.Add(new Claim(ClaimTypes.Role, role));
+        
+            // var identityRole = await _roleManager.FindByNameAsync(role);
+            // claims.AddRange(GetClaimsSeperated(await _roleManager.GetClaimsAsync(identityRole)));
+        }
 
         return claims;
     }

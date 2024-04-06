@@ -13,8 +13,7 @@ public class TypeSafe
     {
         public const string Product = "Product";
         public const string ProductItem = "ProductItem";
-        public const string Module = "Module";
-        public const string ClassRoom = "ClassRoom";
+        public const string PaymentType = "PaymentType";
     }
 
     public static class Permissions
@@ -26,9 +25,22 @@ public class TypeSafe
         public const int Patch = 4;
         public const int Delete = 5;
     }
+    
+    public static string[] GetAdminPermissions()
+    {
+        return new[]
+        {
+            Permissions.Read.ToString(),
+            Permissions.Write.ToString(),
+            Permissions.Update.ToString(),
+            Permissions.Patch.ToString(),
+            Permissions.Delete.ToString()
+        };
+    }
 
     public static class Policies
     {
+        public const string PaymentTypePolicy = "PaymentTypePolicy";
         public const string ReadPolicy = "ReadPolicy";
         public const string ReadAndWritePolicy = "AddAndReadPolicy";
         public const string FullControlPolicy = "FullControlPolicy";

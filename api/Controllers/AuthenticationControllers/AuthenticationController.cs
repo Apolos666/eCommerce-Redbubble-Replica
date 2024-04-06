@@ -35,4 +35,20 @@ public class AuthenticationController : ControllerBase
 
         return Unauthorized();
     }
+    
+    [HttpPost("register")]
+    public async Task<IActionResult> Register([FromBody] UserRegister user)
+    {
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+        
+        var result = await _authenticationService.RegisterUser(user);
+        if (result)
+        {
+            var token = await _authenticationService.GenerateTokenString(user.UserEmail, _jwtConfiguration);
+            return Ok(new TokenReponse() { Token = token });
+        }
+        
+        return BadRequest();
+    }
 }

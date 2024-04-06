@@ -12,6 +12,7 @@ public static class AuthorizationHelper
                 TypeSafe.Permissions.Read,
                 TypeSafe.Permissions.Write,
                 TypeSafe.Permissions.Update,
+                TypeSafe.Permissions.Patch,
                 TypeSafe.Permissions.Delete
             ));
     }
