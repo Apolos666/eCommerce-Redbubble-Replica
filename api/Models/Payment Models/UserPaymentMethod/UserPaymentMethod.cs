@@ -1,9 +1,11 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using api.Models.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace api.Models;
 
+[Index(nameof(IdentityUserId), nameof(PaymentTypeId), nameof(Provider), nameof(AccountNumber), IsUnique = true)]
 public class UserPaymentMethod
 {
     [Key]
