@@ -14,6 +14,9 @@ public class TypeSafe
         public const string Product = "Product";
         public const string ProductItem = "ProductItem";
         public const string PaymentType = "PaymentType";
+        public const string ShippingMethod = "ShippingMethod";
+        public const string OrderStatus = "OrderStatus";
+        public const string UserPaymentMethod = "UserPaymentMethod";
     }
 
     public static class Permissions
@@ -41,6 +44,9 @@ public class TypeSafe
     public static class Policies
     {
         public const string PaymentTypePolicy = "PaymentTypePolicy";
+        public const string ShippingMethodPolicy = "ShippingMethodPolicy";
+        public const string OrderStatus = "OrderStatusPolicy";
+        public const string UserPaymentMethod = "UserPaymentMethodPolicy";
         public const string ReadPolicy = "ReadPolicy";
         public const string ReadAndWritePolicy = "AddAndReadPolicy";
         public const string FullControlPolicy = "FullControlPolicy";

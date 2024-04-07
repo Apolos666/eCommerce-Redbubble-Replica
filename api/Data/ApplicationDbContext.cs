@@ -49,5 +49,6 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationIdentityUser>
         modelBuilder.ApplyConfiguration(new UserAddressConfiguration());
         modelBuilder.ApplyConfiguration(new ShopOrderConfiguration());
         modelBuilder.ApplyConfiguration(new UserReviewConfiguration());
+        modelBuilder.ApplyConfiguration(new OrderStatusConfiguration());
     }
 }

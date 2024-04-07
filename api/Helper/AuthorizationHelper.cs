@@ -5,7 +5,7 @@ namespace api.Helper;
 
 public static class AuthorizationHelper
 {
-    public static Claim GetAdminClaims(string controllerName)
+    public static Claim GetFullAccessClaims(string controllerName)
     {
         return new Claim(controllerName,
             ClaimHelper.SerializePermissions(
@@ -26,7 +26,7 @@ public static class AuthorizationHelper
             ));
     }
     
-    public static Claim GetUserClaims(string controllerName)
+    public static Claim GetReadClaims(string controllerName)
     {
         return new Claim(controllerName,
             ClaimHelper.SerializePermissions(

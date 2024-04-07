@@ -1,12 +1,15 @@
 ﻿using System.Text;
 using api.Configurations;
 using api.Data;
+using api.Extensions;
 using api.Helper;
 using api.Models.Identity;
 using api.Models.Identity.Authentication;
 using api.Models.TypeSafe;
 using api.Repositories.AttributeTypeModel;
 using api.Repositories.ColorModel;
+using api.Repositories.Order_Repositories.OrderStatus;
+using api.Repositories.Payment_Repositories.UserPaymentMethod;
 using api.Repositories.PaymentType;
 using api.Repositories.Product;
 using api.Repositories.ProductAttributeModel;
@@ -15,6 +18,7 @@ using api.Repositories.ProductCategory;
 using api.Repositories.ProductImage;
 using api.Repositories.ProductItem;
 using api.Repositories.ProductSizeVariation;
+using api.Repositories.ShippingMethod;
 using api.Repositories.SizeCategory;
 using api.Repositories.SizeOption;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -48,7 +52,11 @@ public static class ServiceRegistration
             .AddScoped<ISizeOptionRepository, SizeOptionRepository>()
             .AddScoped<IProductSizeVariationRepository, ProductSizeVariationRepository>()
             .AddScoped<IProductAttributeRepository, ProductAttributeRepository>()
-            .AddScoped<IPaymentTypeRepository, PaymentTypeRepository>();
+            .AddScoped<IPaymentTypeRepository, PaymentTypeRepository>()
+            .AddScoped<IShippingMethodRepository, ShippingMethodReopository>()
+            .AddScoped<IOrderStatusRepository, OrderStatusRepository>()
+            .AddScoped<IUserPaymentMethodRepository, UserPaymentMethodRepository>();
+        
 
         return service;
     }
@@ -120,24 +128,20 @@ public static class ServiceRegistration
     {
         service.AddAuthorization(options =>
         {
-            options.AddPolicy(TypeSafe.Policies.PaymentTypePolicy, policy =>
-            {
-                policy.RequireRole(TypeSafe.Roles.Admin);
-                policy.RequireClaim(TypeSafe.Controller.PaymentType,
-                    TypeSafe.GetAdminPermissions());
-            });
+            options.AddPaymentPolicies();
+            options.AddOrderPolicies();
 
-            // Calim-based authorization
-            // StudentController
-            options.AddPolicy(TypeSafe.Policies.FullControlPolicy,
-                policy => { policy.RequireClaim(TypeSafe.Controller.Product); });
-
-            options.AddPolicy(TypeSafe.Policies.ReadAndWritePolicy, policy =>
-            {
-                policy.RequireClaim(TypeSafe.Controller.ProductItem,
-                    TypeSafe.Permissions.Read.ToString(),
-                    TypeSafe.Permissions.Write.ToString());
-            });
+            // // Calim-based authorization
+            // // StudentController
+            // options.AddPolicy(TypeSafe.Policies.FullControlPolicy,
+            //     policy => { policy.RequireClaim(TypeSafe.Controller.Product); });
+            //
+            // options.AddPolicy(TypeSafe.Policies.ReadAndWritePolicy, policy =>
+            // {
+            //     policy.RequireClaim(TypeSafe.Controller.ProductItem,
+            //         TypeSafe.Permissions.Read.ToString(),
+            //         TypeSafe.Permissions.Write.ToString());
+            // });
 
             // // Calim-based authorization using value
             // // StudentController
@@ -211,10 +215,17 @@ public static class ServiceRegistration
             // Ading Claims to Users
             // Ading Claims to Users
             await userManager.AddClaimAsync(adminUser,
-                AuthorizationHelper.GetAdminClaims(TypeSafe.Controller.PaymentType));
+                AuthorizationHelper.GetFullAccessClaims(TypeSafe.Controller.PaymentType));
+            await userManager.AddClaimAsync(adminUser,
+                AuthorizationHelper.GetFullAccessClaims(TypeSafe.Controller.ShippingMethod));
+            await userManager.AddClaimAsync(adminUser,
+                AuthorizationHelper.GetFullAccessClaims(TypeSafe.Controller.OrderStatus));
+            await userManager.AddClaimAsync(adminUser,
+                AuthorizationHelper.GetFullAccessClaims(TypeSafe.Controller.UserPaymentMethod));
             await userManager.AddClaimAsync(contributorUser,
                 AuthorizationHelper.GetcontributorClaims(TypeSafe.Controller.Product));
-            await userManager.AddClaimAsync(user, AuthorizationHelper.GetUserClaims(TypeSafe.Controller.Product));
+            await userManager.AddClaimAsync(user, AuthorizationHelper.GetReadClaims(TypeSafe.Controller.Product));
+            await userManager.AddClaimAsync(user, AuthorizationHelper.GetFullAccessClaims(TypeSafe.Controller.UserPaymentMethod));
 
             // Adding Roles to Users
             await userManager.AddToRoleAsync(adminUser, TypeSafe.Roles.Admin);
