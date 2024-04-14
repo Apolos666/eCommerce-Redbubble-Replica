@@ -4,6 +4,7 @@ import {computed, onMounted, ref} from "vue";
 import HeaderSearchBox from "@/components/Utilities/HeaderSearchBox.vue";
 import DownloadLabelNotification from "@/components/Utilities/DownloadLabelNotification.vue";
 import {useDetectScreenSize} from "@/stores/detectScreenSize.js";
+import MenuBar from "@/components/Header Navigation/MenuBar.vue";
 
 const detectScreenSizePinia = useDetectScreenSize()
 
@@ -67,6 +68,7 @@ const OnClickMenu = (typeMenu, value) => {
     </div>
   </div>
   <HeaderSearchBox v-if="detectScreenSizePinia.isMobile" />
+  <MenuBar />
   <DownloadLabelNotification />
 </header>
 </template>
