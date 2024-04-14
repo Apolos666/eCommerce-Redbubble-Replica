@@ -1,8 +1,7 @@
 <script setup>
-import Test from "@/components/Test.vue";
+import HeadNavigation from "@/components/Header Navigation/HeaderNavigation.vue";
 </script>
 
 <template>
-<Test />
-
+<HeadNavigation />
 </template>
