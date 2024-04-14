@@ -1,8 +1,11 @@
 using api.Configurations;
 using api.Models.Identity.Authentication;
+using api.Models.Security;
 using api.Services;
+using api.Services.ServicesRegistration;
 
 var builder = WebApplication.CreateBuilder(args);
+var configuration = builder.Configuration;
 
 var dbConfig = new DatabaseConfig();
 builder.Configuration.GetSection("DatabaseConfig").Bind(dbConfig);
@@ -16,6 +19,8 @@ builder.Services.AddApplicationServices();
 builder.Services.AddApplicationIdentity();
 builder.Services.AddApplicationJwtAuthentication(jwtConfig);
 builder.Services.AddApplicationAuthorization();
+var corsConfig = new CorsConfig("VuejsWebApp", "http://localhost:5173");
+builder.Services.AddCorsService(corsConfig);
 builder.Services.AddThirdPartyServices();
 
 builder.Services.AddEndpointsApiExplorer();
@@ -43,6 +48,8 @@ app.UseAuthorization();
 app.UseHttpsRedirection();
 
 app.MapControllers();
+
+app.UseCors("VuejsWebApp");
 
 await app.SeedDataAsync();
 
