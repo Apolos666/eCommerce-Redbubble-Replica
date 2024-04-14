@@ -4,4 +4,5 @@ import Test from "@/components/Test.vue";
 
 <template>
 <Test />
+
 </template>
