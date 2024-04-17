@@ -27,7 +27,7 @@ const OnClickMenu = (typeMenu, value) => {
 
 <template>
 <header>
-  <div class="flex items-center justify-between mx-4 my-2">
+  <div class="flex items-center justify-between mx-4 my-2 lg:justify-stretch lg:mb-4">
     <div class="flex items-center">
       <button
           class="p-4 lg:hidden"
@@ -44,10 +44,10 @@ const OnClickMenu = (typeMenu, value) => {
         <p class="font-bold text-xl "> REDBUBBLE </p>
       </div>
     </div>
-    <HeaderSearchBox v-if="detectScreenSizePinia.isDesktop || detectScreenSizePinia.isTablet"/>
-    <div class="hidden lg:block text-lg font-semibold">Sell your art</div>
-    <div class="hidden lg:block text-lg font-semibold">Login</div>
-    <div class="hidden lg:block text-lg font-semibold">Signup</div>
+    <HeaderSearchBox class="lg:mx-4 lg:w-full" v-if="detectScreenSizePinia.isDesktop || detectScreenSizePinia.isTablet"/>
+    <div class="hidden lg:block text-lg font-semibold lg:mx-6 lg:text-nowrap">Sell your art</div>
+    <div class="hidden lg:block text-lg font-semibold lg:mx-6 lg:text-nowrap">Login</div>
+    <div class="hidden lg:block text-lg font-semibold lg:mx-6 lg:text-nowrap">Signup</div>
     <div class="flex">
       <div
           class="p-4"

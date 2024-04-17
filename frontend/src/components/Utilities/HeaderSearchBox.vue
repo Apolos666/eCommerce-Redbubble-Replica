@@ -4,6 +4,10 @@ import {ref} from "vue";
 import {useSearchBoxStore} from "@/stores/searchBoxStore.js";
 import {useDetectScreenSize} from "@/stores/detectScreenSize.js";
 
+defineOptions({
+  inheritAttrs: false
+})
+
 const searchBoxPinia = useSearchBoxStore();
 const detectScreenSize = useDetectScreenSize()
 
@@ -21,7 +25,7 @@ setInterval(() => {
 </script>
 
 <template>
-  <form class="mx-2 mt-2 flex items-center justify-between" action="">
+  <form class="mx-2 mt-2 flex items-center justify-between" v-bind="$attrs" action="">
     <div
         class="flex items-center justify-between overflow-hidden outline rounded-lg w-full"
         :class="[searchBoxPinia.isSearchBoxClicked ? 'outline-lavender' : 'outline-green-500',
@@ -29,7 +33,7 @@ setInterval(() => {
     >
       <div class="flex-grow">
         <input
-            class="outline-none p-3 w-full"
+            class="outline-none p-3 w-full lg:h-14"
             type="text"
             v-model="searchBoxPinia.inputValue"
             :placeholder="currentSearchContent"
