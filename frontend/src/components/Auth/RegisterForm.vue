@@ -79,7 +79,7 @@ const onSubmit = handleSubmit(onSuccessSubmit, onErrorSubmit);
         input-type="password"
         v-bind="confirmPasswordProps"
     />
-    <div class="flex p-4 my-3">
+    <div class="flex p-4 my-2">
       <input
           v-model="isChecked"
           v-bind="isCheckedProps"
