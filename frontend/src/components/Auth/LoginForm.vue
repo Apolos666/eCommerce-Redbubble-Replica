@@ -66,7 +66,7 @@ const onSubmit = handleSubmit(onSuccessSubmit, onErrorSubmit);
         />
         <label for="isRemember">Remember me</label>
       </div>
-      <RouterLink to="">Lost Password?</RouterLink>
+      <RouterLink :to="{ name: 'account_recovery'}">Lost Password?</RouterLink>
     </div>
     <div class="text-center text-slate-500 my-3">
       By clicking Log in, you agree to our <a href="" class="font-bold">User Agreement</a>

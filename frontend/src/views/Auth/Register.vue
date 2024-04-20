@@ -6,7 +6,6 @@ import FooterAuth from "@/components/Auth/FooterAuth.vue";
 
 <template>
   <div>
-    <HeaderAuth />
     <div class="text-center text-2xl mt-10">Join Redbubble</div>
     <div class="text-center mt-5">Sign up as customer for 20% off your first order. Your coupon will be emailed after sign up.</div>
     <RegisterForm />
@@ -20,6 +19,5 @@ import FooterAuth from "@/components/Auth/FooterAuth.vue";
     <div class="text-center m-4 text-slate-500 text-sm">
       This site is protected by reCAPTCHA and the Google <a href="" class="font-bold">Privacy Policy</a> and <a href="" class="font-bold">Terms of Service</a> apply.
     </div>
-    <FooterAuth />
   </div>
 </template>

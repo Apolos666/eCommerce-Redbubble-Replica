@@ -7,15 +7,27 @@ const routes = [
     component: () => import("@/views/Home.vue")
   },
   {
-    path: '/auth/register',
-    name: 'register',
-    component: () => import("@/views/Register.vue")
+    path: '/auth/',
+    name: 'auth',
+    component: () => import("@/views/Auth/AuthAccount.vue"),
+    children: [
+      {
+        path: 'register',
+        name: 'register',
+        component: () => import("@/views/Auth/Register.vue")
+      },
+      {
+        path: 'login',
+        name: 'login',
+        component: () => import("@/views/Auth/Login.vue")
+      },
+      {
+        path: "account_recovery",
+        name: "account_recovery",
+        component: () => import("@/views/Auth/AccountRecovery.vue")
+      }
+    ]
   },
-  {
-    path: '/auth/login',
-    name: 'login',
-    component: () => import("@/views/Login.vue")
-  }
 ]
 
 const router = createRouter({
