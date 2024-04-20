@@ -41,6 +41,10 @@ public class AuthenticationController : ControllerBase
     {
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
+
+        await Task.Delay(1000);
+        
+        Console.WriteLine("Called");
         
         var result = await _authenticationService.RegisterUser(user);
         if (result)
@@ -50,5 +54,6 @@ public class AuthenticationController : ControllerBase
         }
         
         return BadRequest();
+        return Ok();
     }
 }

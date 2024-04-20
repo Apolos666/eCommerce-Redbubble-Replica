@@ -107,7 +107,6 @@ public class AuthenticationService : IAuthenticationService
         var identityUser = new ApplicationIdentityUser()
         {
             Email = user.UserEmail,
-            PhoneNumber = user.UserPhone,
             UserName = user.UserName,
         };
         
