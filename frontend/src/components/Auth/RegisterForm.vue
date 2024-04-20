@@ -3,6 +3,7 @@ import CustomInput from '@/components/Utilities/CustomInput.vue'
 import { useForm } from 'vee-validate'
 import * as yup from 'yup'
 import {Icon} from "@iconify/vue";
+import AuthServices from "@/services/Auth/AuthServices.js";
 
 const schema = yup.object({
   email: yup.string().email('Email không hợp lệ').required('Email là bắt buộc'),
@@ -35,8 +36,13 @@ const [confirmPassword, confirmPasswordProps] = defineField('confirmPassword')
 const [isChecked, isCheckedProps] = defineField('isChecked')
 
 const onSuccessSubmit = async (values) => {
-  await new Promise(resolve => setTimeout(resolve, 4000));
-  console.log(values)
+  const response = await AuthServices.registerAccount({
+    UserEmail: values.email,
+    UserName: values.userName,
+    Password: values.password,
+  })
+
+  console.log(response);
 }
 
 const onErrorSubmit = (errors) => {
