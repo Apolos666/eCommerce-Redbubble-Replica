@@ -2,6 +2,7 @@
 import CustomInput from '@/components/Utilities/CustomInput.vue'
 import { useForm } from 'vee-validate'
 import * as yup from 'yup'
+import {Icon} from "@iconify/vue";
 
 const schema = yup.object({
   email: yup.string().email('Email không hợp lệ').required('Email là bắt buộc'),
@@ -23,7 +24,7 @@ const schema = yup.object({
       .required('Xác nhận mật khẩu là bắt buộc'),
 })
 
-const { values, errors, defineField, handleSubmit } = useForm({
+const { values, errors, defineField, handleSubmit, isSubmitting } = useForm({
   validationSchema: schema
 })
 
@@ -34,6 +35,7 @@ const [confirmPassword, confirmPasswordProps] = defineField('confirmPassword')
 const [isChecked, isCheckedProps] = defineField('isChecked')
 
 const onSuccessSubmit = async (values) => {
+  await new Promise(resolve => setTimeout(resolve, 4000));
   console.log(values)
 }
 
@@ -90,8 +92,10 @@ const onSubmit = handleSubmit(onSuccessSubmit, onErrorSubmit);
     </div>
     <button
         class="p-4 border-2 border-black mx-4 text-white bg-pink-500 border-none rounded-full"
+        :disabled="isSubmitting"
     >
-      Submit
+      {{ isSubmitting ? 'Loading' : 'Submit'}}
+      <Icon v-if="isSubmitting" class="inline-block w-8" icon="line-md:loading-loop" />
     </button>
   </form>
 </template>
