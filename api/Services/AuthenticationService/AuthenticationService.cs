@@ -5,6 +5,7 @@ using api.DTOs.IdentityDTOs;
 using api.Helper;
 using api.Models.Identity;
 using api.Models.Identity.Authentication;
+using api.Models.TypeSafe;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 
@@ -111,6 +112,15 @@ public class AuthenticationService : IAuthenticationService
         };
         
         var result = await _userManager.CreateAsync(identityUser, user.Password);
+
+        if (result.Succeeded)
+        {
+            var addToRoleResult = await _userManager.AddToRoleAsync(identityUser, TypeSafe.Roles.User);
+            
+            if (!addToRoleResult.Succeeded)
+                return false;
+        }
+        
         return result.Succeeded;
     }
 }
