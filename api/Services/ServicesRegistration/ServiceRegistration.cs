@@ -1,5 +1,6 @@
 ﻿using api.Configurations;
 using api.Data;
+using api.Infrastructure.Authorization.Requirements.PaymentTypePolicy;
 using api.Repositories.AttributeTypeModel;
 using api.Repositories.ColorModel;
 using api.Repositories.Order_Repositories.OrderStatus;
@@ -15,6 +16,7 @@ using api.Repositories.ProductSizeVariation;
 using api.Repositories.ShippingMethod;
 using api.Repositories.SizeCategory;
 using api.Repositories.SizeOption;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 
 namespace api.Services;
@@ -55,6 +57,13 @@ public static class ServiceRegistration
     public static IServiceCollection AddApplicationServices(this IServiceCollection service)
     {
         service.AddScoped<IAuthenticationService, AuthenticationService>();
+
+        return service;
+    }
+
+    public static IServiceCollection AddRequirementHandler(this IServiceCollection service)
+    {
+        service.AddSingleton<IAuthorizationHandler, PaymentTypeRequirementHandler>();
 
         return service;
     }

@@ -1,4 +1,5 @@
-﻿using api.Models.TypeSafe;
+﻿using api.Infrastructure.Authorization.Requirements.PaymentTypePolicy;
+using api.Models.TypeSafe;
 using Microsoft.AspNetCore.Authorization;
 
 namespace api.Extensions;
@@ -9,9 +10,7 @@ public static class AuthorizationOptionExtensions
     {
         options.AddPolicy(TypeSafe.Policies.PaymentTypePolicy, policy =>
         {
-            policy.RequireRole(TypeSafe.Roles.Admin);
-            policy.RequireClaim(TypeSafe.Controller.PaymentType,
-                TypeSafe.GetAdminPermissions());
+            policy.Requirements.Add(new PaymentTypeRequirements());
         });
         
         options.AddPolicy(TypeSafe.Policies.UserPaymentMethod, policy =>

@@ -8,6 +8,7 @@ using api.Models.Identity.Authentication;
 using api.Models.TypeSafe;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json;
 
 namespace api.Services;
 
@@ -31,6 +32,13 @@ public class AuthenticationService : IAuthenticationService
     public Task<bool> AddUserClaim(string user, Claim claim)
     {
         throw new NotImplementedException();
+    }
+
+    public async Task<bool> AddUserRole(ApplicationIdentityUser user, string role)
+    {
+        var addToRoleResult = await _userManager.AddToRoleAsync(user, role);
+            
+        return addToRoleResult.Succeeded;
     }
 
     public async Task<string> GenerateTokenString(string userEmail, JwtConfiguration jwtConfig)
@@ -61,20 +69,25 @@ public class AuthenticationService : IAuthenticationService
 
         var claims = new List<Claim>()
         {
-            new Claim(ClaimTypes.Name, userEmail),
+            new Claim(ClaimTypes.Name, user.UserName),
         };
-
-        claims.AddRange(GetClaimsSeperated(await _userManager.GetClaimsAsync(user)));
-        var roles = await _userManager.GetRolesAsync(user);
         
+        var roles = await _userManager.GetRolesAsync(user);
         foreach (var role in roles)
         {
             claims.Add(new Claim(ClaimTypes.Role, role));
-        
-            // var identityRole = await _roleManager.FindByNameAsync(role);
-            // claims.AddRange(GetClaimsSeperated(await _roleManager.GetClaimsAsync(identityRole)));
         }
 
+        var permissions = new Dictionary<string, List<string>>();
+        var userClaims = await _userManager.GetClaimsAsync(user);
+        foreach (var claim in userClaims)
+        {
+            permissions[claim.Type] = claim.DeserializePermissions().Select(p => p.ToString()).ToList();
+        }
+        claims.Add(new Claim("Permissions", JsonConvert.SerializeObject(permissions)));
+        
+        // claims.AddRange(GetClaimsSeperated(await _userManager.GetClaimsAsync(user)));
+        
         return claims;
     }
     
@@ -115,10 +128,7 @@ public class AuthenticationService : IAuthenticationService
 
         if (result.Succeeded)
         {
-            var addToRoleResult = await _userManager.AddToRoleAsync(identityUser, TypeSafe.Roles.User);
-            
-            if (!addToRoleResult.Succeeded)
-                return false;
+            return await AddUserRole(identityUser, TypeSafe.Roles.User);
         }
         
         return result.Succeeded;

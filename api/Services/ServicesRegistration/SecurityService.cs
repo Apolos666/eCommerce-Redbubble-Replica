@@ -1,9 +1,11 @@
 ﻿using System.Text;
 using api.Data;
 using api.Extensions;
+using api.Infrastructure.Authorization.Requirements.PaymentTypePolicy;
 using api.Models.Identity;
 using api.Models.Identity.Authentication;
 using api.Models.Security;
+using api.Models.TypeSafe;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
