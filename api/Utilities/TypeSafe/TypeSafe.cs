@@ -68,4 +68,9 @@ public class TypeSafe
     {
         public const string Permissions = "Permissions";
     }
+    
+    public static class CookiesName
+    {
+        public static string Token = "Token";
+    }
 }

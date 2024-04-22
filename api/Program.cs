@@ -17,11 +17,11 @@ builder.Configuration.GetSection("DatabaseConfig").Bind(dbConfig);
 var jwtConfig = new JwtConfiguration();
 builder.Configuration.GetSection("JwtConfig").Bind(jwtConfig);
 builder.Services.AddSingleton(jwtConfig);
-
 builder.Services.AddApplicationRepositories(dbConfig);
 builder.Services.AddApplicationServices();
 builder.Services.AddRequirementHandler();
 builder.Services.AddApplicationIdentity();
+// builder.Services.AddCookiePolicy();
 builder.Services.AddApplicationJwtAuthentication(jwtConfig);
 builder.Services.AddApplicationAuthorization();
 var corsConfig = new CorsConfig("VuejsWebApp", "http://localhost:5173");
@@ -31,6 +31,7 @@ builder.Services.AddThirdPartyServices();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddControllers();
 builder.Services.AddProblemDetails();
+builder.Services.AddHttpContextAccessor();
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 
 var app = builder.Build();
@@ -48,48 +49,6 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseAuthentication();
-
-app.Use(async (context, next) =>
-{
-    // var claims = context.User.Claims;
-    //
-    // var roleClaim = claims.FirstOrDefault(c => c.Type == TypeSafe.Microsoft.RolePath);
-    //     
-    // if (roleClaim.Value != TypeSafe.Roles.Admin)
-    // {
-    //     Console.WriteLine("Failed Authorization");
-    //     return;
-    // }
-    //     
-    // var permissions = claims.FirstOrDefault(c => c.Type == TypeSafe.AuthorizationPayload.Permissions);
-    //     
-    // if (permissions is not null)
-    // {
-    //     var dictPermission = JsonConvert.DeserializeObject<Dictionary<string, List<string>>>(permissions.Value);
-    //         
-    //     foreach (var (permissionKey, permissionValue) in dictPermission)
-    //     {
-    //         if (permissionKey != TypeSafe.Controller.PaymentType)
-    //         {
-    //             continue;
-    //         }
-    //             
-    //         var listPermission = AuthorizeHelper.GetPermissionFromClaim(permissionValue);
-    //         if (listPermission.Contains(TypeSafe.Permissions.Read) && 
-    //             listPermission.Contains(TypeSafe.Permissions.Write) && 
-    //             listPermission.Contains(TypeSafe.Permissions.Update) &&
-    //             listPermission.Contains(TypeSafe.Permissions.Patch) &&
-    //             listPermission.Contains(TypeSafe.Permissions.Delete))
-    //         {
-    //             Console.WriteLine("Succesful Authorization");
-    //         }
-    //             
-    //     }
-    // }
-        
-    await next();
-});
-
 app.UseAuthorization();
 
 app.UseHttpsRedirection();

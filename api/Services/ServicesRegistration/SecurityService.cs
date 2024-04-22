@@ -65,6 +65,15 @@ public static class SecurityService
                     ValidAudience = jwtConfig.Audience,
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtConfig.Key))
                 };
+
+                options.Events = new JwtBearerEvents()
+                {
+                    OnMessageReceived = context =>
+                    {
+                        context.Token = context.Request.Cookies[TypeSafe.CookiesName.Token];
+                        return Task.CompletedTask;
+                    }
+                };
             });
 
         return service;
