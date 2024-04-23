@@ -33,8 +33,9 @@ public class AuthenticationController : ControllerBase
         var result = await _authenticationService.Login(credentials);
         if (result)
         {
-            var token = await _authenticationService.GenerateTokenString(credentials.UserEmail, _jwtConfiguration);
-            return Ok(new TokenReponse() { Token = token });
+            var token = await _authenticationService.GenerateTokenString(credentials.UserOrEmail, _jwtConfiguration);
+            WriteCookie(token);
+            return Ok();
         }
 
         return Unauthorized();
@@ -50,19 +51,24 @@ public class AuthenticationController : ControllerBase
         if (result)
         {
             var token = await _authenticationService.GenerateTokenString(user.UserEmail, _jwtConfiguration);
-            _httpContextAccessor.HttpContext?.Response.Cookies.Append(TypeSafe.CookiesName.Token, token,
-                new CookieOptions
-                {
-                    IsEssential = true,
-                    Expires = DateTime.Now.AddDays(123),
-                    Secure = false,
-                    SameSite = SameSiteMode.None,
-                    Domain = "http://localhost:5173"
-                });
+            WriteCookie(token);
 
             return Ok();
         }
 
         return BadRequest("Could not register user.");
+    }
+
+    private void WriteCookie(string token)
+    {
+        _httpContextAccessor.HttpContext?.Response.Cookies.Append(TypeSafe.CookiesName.Token, token,
+            new CookieOptions
+            {
+                Expires = DateTime.Now.AddDays(7),
+                HttpOnly = true,
+                Secure = true,
+                SameSite = SameSiteMode.Strict,
+                IsEssential = true,
+            });
     }
 }

@@ -41,9 +41,9 @@ public class AuthenticationService : IAuthenticationService
         return addToRoleResult.Succeeded;
     }
 
-    public async Task<string> GenerateTokenString(string userEmail, JwtConfiguration jwtConfig)
+    public async Task<string> GenerateTokenString(string userOrEmail, JwtConfiguration jwtConfig)
     {
-        var claims = await GetClaims(userEmail);
+        var claims = await GetClaims(userOrEmail);
 
         var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtConfig.Key));
 
@@ -63,9 +63,9 @@ public class AuthenticationService : IAuthenticationService
         return tokenHandler.WriteToken(token);
     }
     
-    private async Task<List<Claim>> GetClaims(string userEmail)
+    private async Task<List<Claim>> GetClaims(string userOrEmail)
     {
-        var user = await _userManager.FindByEmailAsync(userEmail); 
+        var user = await _userManager.FindByEmailAsync(userOrEmail) ?? await _userManager.FindByNameAsync(userOrEmail); 
 
         var claims = new List<Claim>()
         {
@@ -103,7 +103,7 @@ public class AuthenticationService : IAuthenticationService
 
     public async Task<bool> Login(UserLogin credentials)
     {
-        var user = await _userManager.FindByEmailAsync(credentials.UserEmail);
+        var user = await _userManager.FindByEmailAsync(credentials.UserOrEmail) ?? await _userManager.FindByNameAsync(credentials.UserOrEmail);
 
         if (user is not null)   
             return await _userManager.CheckPasswordAsync(user, credentials.Password);

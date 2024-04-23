@@ -1,8 +1,10 @@
 <script setup>
-
-import HeaderAuth from "@/components/Auth/HeaderAuth.vue";
 import LoginForm from "@/components/Auth/LoginForm.vue";
-import FooterAuth from "@/components/Auth/FooterAuth.vue";
+import Test from "@/services/Test.js";
+
+const test = async () => {
+  await Test.getAllPaymentTypes();
+}
 </script>
 
 <template>
@@ -12,4 +14,8 @@ import FooterAuth from "@/components/Auth/FooterAuth.vue";
     <RouterLink :to="{ name: 'register' }" class="font-bold">Sign up</RouterLink>
   </div>
   <LoginForm />
+  <form>
+    <div>Hello</div>
+    <button @click.prevent="test" class="p-4 border-black border-2">Click Me</button>
+  </form>
 </template>

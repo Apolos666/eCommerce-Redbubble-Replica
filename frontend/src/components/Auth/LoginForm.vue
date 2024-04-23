@@ -2,6 +2,8 @@
 import * as yup from "yup";
 import {useForm} from "vee-validate";
 import CustomInput from "@/components/Utilities/CustomInput.vue";
+import AuthServices from "@/services/Auth/AuthServices.js";
+import {Icon} from "@iconify/vue";
 
 const schema = yup.object({
   emailAndUser: yup
@@ -18,7 +20,7 @@ const schema = yup.object({
   isRemember: yup.boolean(),
 });
 
-const { values, errors, defineField, handleSubmit } = useForm({
+const { values, errors, defineField, handleSubmit, isSubmitting } = useForm({
   validationSchema: schema,
 });
 
@@ -27,7 +29,10 @@ const [password, passwordProps] = defineField("password");
 const [isRemember, isRememberProps] = defineField("isRemember");
 
 const onSuccessSubmit = async (values) => {
-  console.log(values);
+  const response = await AuthServices.loginAccount({
+    UserOrEmail: values.emailAndUser,
+    Password: values.password,
+  })
 };
 
 const onErrorSubmit = (errors) => {
@@ -73,8 +78,10 @@ const onSubmit = handleSubmit(onSuccessSubmit, onErrorSubmit);
     </div>
     <button
         class="p-4 border-2 border-black m-4 text-white bg-pink-500 border-none rounded-full"
+        :disabled="isSubmitting"
     >
-      Log in
+      {{ isSubmitting ? 'Logging in' : 'Log in'}}
+      <Icon v-if="isSubmitting" class="inline-block w-8" icon="line-md:loading-loop" />
     </button>
     <div class="text-center text-slate-500 mx-4">
       This is site protected by reCAPTCHA and the Google <a href="" class="font-bold">Privacy Policy</a> and <a href="" class="font-bold">Terms of Service</a> apply.
