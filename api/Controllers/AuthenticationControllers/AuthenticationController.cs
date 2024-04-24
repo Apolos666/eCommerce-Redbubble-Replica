@@ -1,5 +1,8 @@
-﻿using api.DTOs.IdentityDTOs;
+﻿using System.Security.Cryptography;
+using api.DTOs.IdentityDTOs;
+using api.Models.Identity;
 using api.Models.Identity.Authentication;
+using api.Models.Security;
 using api.Models.TypeSafe;
 using api.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -31,14 +34,12 @@ public class AuthenticationController : ControllerBase
             return BadRequest(ModelState);
 
         var result = await _authenticationService.Login(credentials);
-        if (result)
-        {
-            var token = await _authenticationService.GenerateTokenString(credentials.UserOrEmail, _jwtConfiguration);
-            WriteCookie(token);
-            return Ok();
-        }
+        if (!result.IsSuccess)
+            return Unauthorized();
 
-        return Unauthorized();
+        await GenerateAndWriteTokens(result.User);
+
+        return Ok();
     }
 
     [HttpPost("register")]
@@ -48,27 +49,33 @@ public class AuthenticationController : ControllerBase
             return BadRequest(ModelState);
 
         var result = await _authenticationService.RegisterUser(user);
-        if (result)
-        {
-            var token = await _authenticationService.GenerateTokenString(user.UserEmail, _jwtConfiguration);
-            WriteCookie(token);
+        if (!result.IsSuccess)
+            return BadRequest("Could not register user.");
 
-            return Ok();
-        }
+        await GenerateAndWriteTokens(result.User);
 
-        return BadRequest("Could not register user.");
+        return Ok();
     }
 
-    private void WriteCookie(string token)
+    [HttpGet("refreshtoken")]
+    public async Task<ActionResult<string>> RefreshToken()
     {
-        _httpContextAccessor.HttpContext?.Response.Cookies.Append(TypeSafe.CookiesName.Token, token,
-            new CookieOptions
-            {
-                Expires = DateTime.Now.AddDays(7),
-                HttpOnly = true,
-                Secure = true,
-                SameSite = SameSiteMode.Strict,
-                IsEssential = true,
-            });
+        var refreshToken = _httpContextAccessor.HttpContext?.Request.Cookies[TypeSafe.CookiesName.RefreshToken];
+
+        var user = await _authenticationService.GetUserByRefreshToken(refreshToken);
+        if (user == null || user.ExpiresTime < DateTime.Now)
+            return Unauthorized("Refresh Token has expired.");
+
+        await GenerateAndWriteTokens(user);
+
+        return Ok();
+    }
+
+    private async Task GenerateAndWriteTokens(ApplicationIdentityUser user)
+    {
+        var accessToken = await _authenticationService.GenerateTokenString(user, _jwtConfiguration);
+        _authenticationService.WriteAccessToken(accessToken);
+        var generatedRefreshToken =  _authenticationService.GenerateRefreshToken();
+        await _authenticationService.WriteRefreshToken(generatedRefreshToken, user);
     }
 }

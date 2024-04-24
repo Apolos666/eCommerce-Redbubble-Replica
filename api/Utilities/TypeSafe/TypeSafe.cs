@@ -71,6 +71,7 @@ public class TypeSafe
     
     public static class CookiesName
     {
-        public static string Token = "Token";
+        public static string Token = "X-ACCESS-TOKEN";
+        public static string RefreshToken = "X-REFRESH-TOKEN";
     }
 }

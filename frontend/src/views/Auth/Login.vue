@@ -5,6 +5,10 @@ import Test from "@/services/Test.js";
 const test = async () => {
   await Test.getAllPaymentTypes();
 }
+
+const test2 = async () => {
+  await Test.refreshToken()
+;}
 </script>
 
 <template>
@@ -17,5 +21,9 @@ const test = async () => {
   <form>
     <div>Hello</div>
     <button @click.prevent="test" class="p-4 border-black border-2">Click Me</button>
+  </form>
+  <form>
+    <div>Hello</div>
+    <button @click.prevent="test2" class="p-4 border-black border-2">Click Me 2</button>
   </form>
 </template>
