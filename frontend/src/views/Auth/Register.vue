@@ -2,6 +2,10 @@
 import HeaderAuth from '@/components/Auth/HeaderAuth.vue'
 import RegisterForm from "@/components/Auth/RegisterForm.vue";
 import FooterAuth from "@/components/Auth/FooterAuth.vue";
+import Test from "@/services/Test.js";
+const test = async () => {
+  let value = await Test.getAllPaymentTypes();
+}
 </script>
 
 <template>
@@ -13,6 +17,10 @@ import FooterAuth from "@/components/Auth/FooterAuth.vue";
       Already have an account?
       <RouterLink :to="{ name: 'login' }" class="font-bold">Log in</RouterLink>
     </div>
+    <form>
+      <div>Hello</div>
+      <button @click.prevent="test" class="p-4 border-black border-2">Click Me</button>
+    </form>
     <div class="text-center mx-4 text-slate-500 text-sm">
       By clicking Sign Up, you agree to our <a href="" class="font-bold">User Agreement</a> and <a href="" class="font-bold">Privacy Policy</a>.
     </div>

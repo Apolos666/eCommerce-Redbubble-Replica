@@ -48,14 +48,14 @@ if (app.Environment.IsDevelopment())
     // app.UseSwaggerUI();
 }
 
+app.UseCors("VuejsWebApp");
+
 app.UseAuthentication();
 app.UseAuthorization();
 
 app.UseHttpsRedirection();
 
 app.MapControllers();
-
-app.UseCors("VuejsWebApp");
 
 await app.SeedDataAsync();
 

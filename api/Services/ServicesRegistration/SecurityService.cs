@@ -60,9 +60,11 @@ public static class SecurityService
                     ValidateIssuer = true,
                     ValidateAudience = true,
                     RequireExpirationTime = true,
+                    ValidateLifetime = true,
                     ValidateIssuerSigningKey = true,
                     ValidIssuer = jwtConfig.Issuer,
                     ValidAudience = jwtConfig.Audience,
+                    ClockSkew = TimeSpan.Zero,
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtConfig.Key))
                 };
 

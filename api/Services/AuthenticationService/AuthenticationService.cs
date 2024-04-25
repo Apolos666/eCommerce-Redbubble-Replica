@@ -57,7 +57,7 @@ public class AuthenticationService : IAuthenticationService
             Subject = new ClaimsIdentity(claims),
             Issuer = jwtConfig.Issuer,
             Audience = jwtConfig.Audience,
-            Expires = DateTime.Now.AddMinutes(jwtConfig.ExpiresMin),
+            Expires = DateTime.Now.AddMilliseconds(jwtConfig.ExpiresMin + 20000),
             SigningCredentials = signingCred
         };
 
@@ -71,7 +71,7 @@ public class AuthenticationService : IAuthenticationService
         _httpContext.HttpContext?.Response.Cookies.Append(TypeSafe.CookiesName.Token, accessToken,
             new CookieOptions
             {
-                Expires = DateTime.Now.AddDays(7),
+                Expires = DateTime.Now.AddMinutes(60),
                 HttpOnly = true,
                 Secure = true,
                 SameSite = SameSiteMode.Strict,
@@ -85,7 +85,7 @@ public class AuthenticationService : IAuthenticationService
         {
             Token = Convert.ToBase64String(RandomNumberGenerator.GetBytes(64)),
             Created = DateTime.Now,
-            Expires = DateTime.Now.AddDays(7),
+            Expires = DateTime.Now.AddDays(30),
         };
 
         return refreshToken;
