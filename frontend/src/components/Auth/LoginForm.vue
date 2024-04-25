@@ -4,6 +4,7 @@ import {useForm} from "vee-validate";
 import CustomInput from "@/components/Utilities/CustomInput.vue";
 import AuthServices from "@/services/Auth/AuthServices.js";
 import {Icon} from "@iconify/vue";
+import router from "@/router/router.js";
 
 const schema = yup.object({
   emailAndUser: yup
@@ -33,6 +34,8 @@ const onSuccessSubmit = async (values) => {
     UserOrEmail: values.emailAndUser,
     Password: values.password,
   })
+
+  console.log(response)
 };
 
 const onErrorSubmit = (errors) => {

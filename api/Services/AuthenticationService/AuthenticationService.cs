@@ -57,7 +57,7 @@ public class AuthenticationService : IAuthenticationService
             Subject = new ClaimsIdentity(claims),
             Issuer = jwtConfig.Issuer,
             Audience = jwtConfig.Audience,
-            Expires = DateTime.Now.AddMilliseconds(jwtConfig.ExpiresMin + 20000),
+            Expires = DateTime.Now.AddMinutes(jwtConfig.ExpiresMin),
             SigningCredentials = signingCred
         };
 

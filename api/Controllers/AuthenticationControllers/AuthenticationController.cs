@@ -35,7 +35,7 @@ public class AuthenticationController : ControllerBase
 
         var result = await _authenticationService.Login(credentials);
         if (!result.IsSuccess)
-            return Unauthorized();
+            return Unauthorized("Invalid credentials.");
 
         await GenerateAndWriteTokens(result.User);
 
