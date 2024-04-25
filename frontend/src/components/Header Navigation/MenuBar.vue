@@ -18,7 +18,7 @@ onMounted( async () => {
   <div
       class="p-2 font-normal"
       v-for="(category, index) in productCategories"
-      :key
+      :key="index"
   >
     {{ category.categoryName }}
   </div>

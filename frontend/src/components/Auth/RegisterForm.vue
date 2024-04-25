@@ -4,6 +4,7 @@ import { useForm } from 'vee-validate'
 import * as yup from 'yup'
 import {Icon} from "@iconify/vue";
 import AuthServices from "@/services/Auth/AuthServices.js";
+import router from "@/router/router.js";
 
 const schema = yup.object({
   email: yup.string().email('Email không hợp lệ').required('Email là bắt buộc'),
@@ -42,7 +43,9 @@ const onSuccessSubmit = async (values) => {
     Password: values.password,
   })
 
-  console.log(response);
+  if (response.status === 200) {
+    await router.push({name: 'home'})
+  }
 }
 
 const onErrorSubmit = (errors) => {

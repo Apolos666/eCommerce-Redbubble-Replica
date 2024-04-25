@@ -35,7 +35,8 @@ const onSuccessSubmit = async (values) => {
     Password: values.password,
   })
 
-  console.log(response)
+  if (response.status === 200)
+    await router.push({name: 'home'});
 };
 
 const onErrorSubmit = (errors) => {

@@ -9,10 +9,10 @@ import { Icon } from '@iconify/vue'
         <Icon class="text-2xl" icon="iconamoon:menu-burger-horizontal" />
       </div>
       <div class="2xl:ml-32">
-        <RouterLinK to="" class="flex items-center">
+        <RouterLink :to="{ name: 'home' }" class="flex items-center">
           <Icon class="text-4xl mr-2 lg:text-6xl" icon="logos:prestashop" />
           <p class="text-3xl font-bold font-mono lg:text-4xl">REDBUBBLE</p>
-        </RouterLinK>
+        </RouterLink>
       </div>
     </div>
     <div class="flex">
