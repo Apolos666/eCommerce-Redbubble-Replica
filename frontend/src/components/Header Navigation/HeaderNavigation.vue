@@ -1,10 +1,12 @@
 <script setup>
 import {Icon} from "@iconify/vue";
-import {computed, onMounted, ref} from "vue";
+import {computed, onMounted, ref, watchEffect} from "vue";
 import HeaderSearchBox from "@/components/Utilities/HeaderSearchBox.vue";
 import DownloadLabelNotification from "@/components/Utilities/DownloadLabelNotification.vue";
 import {useDetectScreenSize} from "@/stores/detectScreenSize.js";
 import MenuBar from "@/components/Header Navigation/MenuBar.vue";
+
+const emit = defineEmits(['OpenSideBarNavigation']);
 
 const detectScreenSizePinia = useDetectScreenSize()
 
@@ -22,6 +24,11 @@ const menuButtons = {
 const OnClickMenu = (typeMenu, value) => {
   typeMenu.value = value;
 };
+
+watchEffect(() => {
+  if (isBurgerMenuClicked.value)
+    emit('OpenSideBarNavigation')
+})
 
 </script>
 

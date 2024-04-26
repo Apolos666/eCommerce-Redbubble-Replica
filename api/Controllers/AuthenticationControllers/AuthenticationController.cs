@@ -70,6 +70,12 @@ public class AuthenticationController : ControllerBase
 
         return Ok();
     }
+    
+    [HttpPost("me")]
+    public async Task<ActionResult<ApplicationIdentityUser>> Me()
+    {
+        return BadRequest();
+    }
 
     private async Task GenerateAndWriteTokens(ApplicationIdentityUser user)
     {
