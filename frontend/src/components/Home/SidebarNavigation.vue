@@ -1,12 +1,11 @@
 <script setup>
 import SidebarCategory from "@/components/Home/SidebarCategory.vue";
 import {inject} from "vue";
-import {useUserInfomation} from "@/composables/useUserInfomation.js";
 import {Icon} from "@iconify/vue";
 
 const isOpen = inject('isOpen');
 
-const { user } = useUserInfomation();
+const props = defineProps(['user']);
 
 </script>
 
@@ -32,15 +31,15 @@ const { user } = useUserInfomation();
               </div>
             </div>
             <div v-else>
-              <div class="flex items-center justify-between">
+              <RouterLink @click="isOpen = false" :to="{ name: 'profile'}" class="flex items-center justify-between">
                 <div class="flex items-center">
                   <img src="../../../public/favicon.ico" alt="">
-                  <div class="ml-4 font-bold">{{ user.userName }}</div>
+                  <div class="ml-4 font-bold">{{ props.user.userName }}</div>
                 </div>
                 <div>
                   <Icon class="w-8 h-8" icon="material-symbols:keyboard-arrow-right" />
                 </div>
-              </div>
+              </RouterLink>
             </div>
           </div>
           <SidebarCategory />

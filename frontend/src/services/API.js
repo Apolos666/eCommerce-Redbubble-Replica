@@ -19,7 +19,7 @@ export default (url='http://localhost:5258/api') => {
                 return instance(error.config);
             } catch (refreshTokenError) {
                 if (refreshTokenError.response && refreshTokenError.response.status === 401) {
-                    await router.push({name: 'login'});
+                    // await router.push({name: 'login'});
                 } else {
                     console.log(refreshTokenError);
                 }

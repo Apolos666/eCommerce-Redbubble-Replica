@@ -44,12 +44,12 @@ watchEffect(() => {
       >
         <Icon class="text-2xl" icon="radix-icons:hamburger-menu" />
       </button>
-      <div class="flex items-center lg:pl-4">
+      <RouterLink :to="{ name: 'home' }" class="flex items-center lg:pl-4">
         <div class="pr-2">
           <Icon class="text-2xl lg:text-4xl" icon="logos:prestashop" />
         </div>
         <p class="font-bold text-xl "> REDBUBBLE </p>
-      </div>
+      </RouterLink>
     </div>
     <HeaderSearchBox class="lg:mx-4 lg:w-full" v-if="detectScreenSizePinia.isDesktop || detectScreenSizePinia.isTablet"/>
     <div class="hidden lg:block text-lg font-semibold lg:mx-6 lg:text-nowrap">Sell your art</div>

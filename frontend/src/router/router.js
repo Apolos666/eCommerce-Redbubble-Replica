@@ -1,10 +1,30 @@
 import {createRouter, createWebHistory} from 'vue-router'
+import User from "@/views/User/Parent/User.vue";
 
 const routes = [
     {
         path: '/',
-        name: 'home',
-        component: () => import("@/views/Home.vue")
+        name: 'index',
+        component: () => import("@/views/Index.vue"),
+        children: [
+            {
+                path: '/home/',
+                name: 'home',
+                component: () => import("@/views/Home.vue")
+            },
+            {
+                path: '/user/',
+                name: 'user',
+                component: () => import("@/views/User/Parent/User.vue"),
+                children: [
+                    {
+                        path: 'profile',
+                        name: 'profile',
+                        component: () => import("@/views/User/Profile.vue")
+                    },
+                ]
+            }
+        ]
     },
     {
         path: '/auth/',
