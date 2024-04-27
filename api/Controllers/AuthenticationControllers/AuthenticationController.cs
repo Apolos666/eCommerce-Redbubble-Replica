@@ -71,10 +71,20 @@ public class AuthenticationController : ControllerBase
         return Ok();
     }
     
-    [HttpPost("me")]
-    public async Task<ActionResult<ApplicationIdentityUser>> Me()
+    [HttpGet("me")]
+    public async Task<ActionResult<GetMe>> Me()
     {
-        return BadRequest();
+        var userName = _httpContextAccessor.HttpContext?.User.Identity?.Name;
+        
+        if (userName is null)
+            return Unauthorized();
+        
+        var user = await _authenticationService.GetMe(userName);
+        
+        if (user is null)
+            return NotFound("User not found.");
+        
+        return Ok(user);
     }
 
     private async Task GenerateAndWriteTokens(ApplicationIdentityUser user)

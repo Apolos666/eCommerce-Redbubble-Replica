@@ -15,6 +15,7 @@ public interface IAuthenticationService
     RefreshToken GenerateRefreshToken();
     Task WriteRefreshToken(RefreshToken refreshToken, ApplicationIdentityUser? user);
     Task<ApplicationIdentityUser?> GetUserByRefreshToken(string refreshToken);
+    Task<GetMe?> GetMe(string userName);
     Task<(bool IsSuccess, ApplicationIdentityUser? User)> Login(UserLogin credentials);
     Task Logout();
     Task<(bool IsSuccess, ApplicationIdentityUser? User)> RegisterUser(UserRegister user);

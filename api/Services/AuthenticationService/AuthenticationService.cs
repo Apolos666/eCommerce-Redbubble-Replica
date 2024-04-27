@@ -8,6 +8,7 @@ using api.Models.Identity;
 using api.Models.Identity.Authentication;
 using api.Models.Security;
 using api.Models.TypeSafe;
+using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -20,15 +21,18 @@ public class AuthenticationService : IAuthenticationService
     private readonly UserManager<ApplicationIdentityUser> _userManager;
     private readonly RoleManager<IdentityRole> _roleManager;
     private readonly IHttpContextAccessor _httpContext;
+    private readonly IMapper _mapper;
 
     public AuthenticationService(
         UserManager<ApplicationIdentityUser> userManager,
         RoleManager<IdentityRole> roleManager,
-        IHttpContextAccessor httpContext)
+        IHttpContextAccessor httpContext,
+        IMapper mapper)
     {
         _userManager = userManager;
         _roleManager = roleManager;
         _httpContext = httpContext;
+        _mapper = mapper;
     }
 
 
@@ -113,6 +117,15 @@ public class AuthenticationService : IAuthenticationService
     public async Task<ApplicationIdentityUser?> GetUserByRefreshToken(string refreshToken)
     {
         return await _userManager.Users.FirstOrDefaultAsync(u => u.RefreshToken == refreshToken);
+    }
+
+    public async Task<GetMe?> GetMe(string userName)
+    {
+        var user = await _userManager.FindByNameAsync(userName);
+        
+        var getMe = _mapper.Map<GetMe>(user);
+
+        return getMe;
     }
 
     private async Task<List<Claim>> GetClaims(ApplicationIdentityUser user)
