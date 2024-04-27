@@ -1,8 +1,13 @@
 <script setup>
 import SidebarCategory from "@/components/Home/SidebarCategory.vue";
 import {inject} from "vue";
+import {useUserInfomation} from "@/composables/useUserInfomation.js";
+import {Icon} from "@iconify/vue";
 
 const isOpen = inject('isOpen');
+
+const { user } = useUserInfomation();
+
 </script>
 
 <template>
@@ -18,11 +23,24 @@ const isOpen = inject('isOpen');
       <div class="w-full h-full bg-white drop-shadow overflow-scroll">
         <div>
           <div class="p-4 bg-gray-200">
-            <div class="">Hi there!</div>
-            <div class="">
-              <RouterLink class="font-bold" :to="{ name: 'login' }" >Log In</RouterLink>
-              or
-              <RouterLink class="font-bold" :to="{ name: 'register' }" >Sign Up</RouterLink>
+            <div v-if="user === null">
+              <div class="">Hi there!</div>
+              <div class="">
+                <RouterLink class="font-bold" :to="{ name: 'login' }" >Log In</RouterLink>
+                or
+                <RouterLink class="font-bold" :to="{ name: 'register' }" >Sign Up</RouterLink>
+              </div>
+            </div>
+            <div v-else>
+              <div class="flex items-center justify-between">
+                <div class="flex items-center">
+                  <img src="../../../public/favicon.ico" alt="">
+                  <div class="ml-4 font-bold">{{ user.userName }}</div>
+                </div>
+                <div>
+                  <Icon class="w-8 h-8" icon="material-symbols:keyboard-arrow-right" />
+                </div>
+              </div>
             </div>
           </div>
           <SidebarCategory />
