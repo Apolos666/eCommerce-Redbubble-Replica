@@ -5,6 +5,7 @@ using api.Models.Identity.Authentication;
 using api.Models.Security;
 using api.Models.TypeSafe;
 using api.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace api.Controllers.AuthenticationControllers;
@@ -71,7 +72,9 @@ public class AuthenticationController : ControllerBase
         return Ok();
     }
     
+    // Todo: Chi cho phep nguoi dung co goi den chinh cai cua ho thoi, khong the goi den cua nguoi khac
     [HttpGet("me")]
+    [Authorize]
     public async Task<ActionResult<GetMe>> Me()
     {
         var userName = _httpContextAccessor.HttpContext?.User.Identity?.Name;

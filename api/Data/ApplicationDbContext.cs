@@ -31,6 +31,7 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationIdentityUser>
     public DbSet<ShopOrder> ShopOrders { get; set; }
     public DbSet<ShippingMethod> ShippingMethods { get; set; }
     public DbSet<OrderStatus> OrderStatus { get; set; }
+    public DbSet<UserImage> UserImages { get; set; }
     
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
     {
