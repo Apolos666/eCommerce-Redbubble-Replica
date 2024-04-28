@@ -1,8 +1,6 @@
-﻿using System.Security.Cryptography;
-using api.DTOs.IdentityDTOs;
+﻿using api.DTOs.IdentityDTOs;
 using api.Models.Identity;
 using api.Models.Identity.Authentication;
-using api.Models.Security;
 using api.Models.TypeSafe;
 using api.Services;
 using Microsoft.AspNetCore.Authorization;
