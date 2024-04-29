@@ -16,6 +16,8 @@ using api.Repositories.ProductSizeVariation;
 using api.Repositories.ShippingMethod;
 using api.Repositories.SizeCategory;
 using api.Repositories.SizeOption;
+using api.Services.AzureServices;
+using api.Services.AzureServices.BlobStrorage;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 
@@ -49,6 +51,8 @@ public static class ServiceRegistration
             .AddScoped<IShippingMethodRepository, ShippingMethodReopository>()
             .AddScoped<IOrderStatusRepository, OrderStatusRepository>()
             .AddScoped<IUserPaymentMethodRepository, UserPaymentMethodRepository>();
+
+        service.AddScoped<IBlobServices, BlobServices>();
         
 
         return service;
@@ -72,7 +76,8 @@ public static class ServiceRegistration
     {
         services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
         services.AddSwaggerGen();
-
+        services.AddAzureServices();
+        
         return services;
     }
 

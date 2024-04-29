@@ -1,12 +1,8 @@
 using api.Configurations;
-using api.Helper;
-using api.Infrastructure.Authorization;
 using api.Models.Identity.Authentication;
 using api.Models.Security;
-using api.Models.TypeSafe;
 using api.Services;
 using api.Services.ServicesRegistration;
-using Newtonsoft.Json;
 
 var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;
