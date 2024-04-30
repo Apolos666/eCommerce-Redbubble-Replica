@@ -16,8 +16,10 @@ using api.Repositories.ProductSizeVariation;
 using api.Repositories.ShippingMethod;
 using api.Repositories.SizeCategory;
 using api.Repositories.SizeOption;
+using api.Repositories.User_Repositories.UserImage;
 using api.Services.AzureServices;
 using api.Services.AzureServices.BlobStrorage;
+using api.Services.AzureServices.BlobStrorage.UserProfile;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 
@@ -50,9 +52,11 @@ public static class ServiceRegistration
             .AddScoped<IPaymentTypeRepository, PaymentTypeRepository>()
             .AddScoped<IShippingMethodRepository, ShippingMethodReopository>()
             .AddScoped<IOrderStatusRepository, OrderStatusRepository>()
-            .AddScoped<IUserPaymentMethodRepository, UserPaymentMethodRepository>();
+            .AddScoped<IUserPaymentMethodRepository, UserPaymentMethodRepository>()
+            .AddScoped<IUserImageRepository, UserImageRepository>();
 
-        service.AddScoped<IBlobServices, BlobServices>();
+        service.AddScoped<IBlobServices, BlobServices>()
+            .AddScoped<IUserProfileBlobServices, UserProfileBlobServices>();
         
 
         return service;

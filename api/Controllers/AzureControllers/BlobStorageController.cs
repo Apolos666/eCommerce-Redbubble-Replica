@@ -1,4 +1,6 @@
-﻿using api.Services.AzureServices.BlobStrorage;
+﻿using api.Models.Azure.Azure_Blob_Storage;
+using api.Services.AzureServices.BlobStrorage;
+using Azure.Storage.Blobs;
 using Microsoft.AspNetCore.Mvc;
 
 namespace api.Controllers.AzureControllers;
@@ -14,24 +16,38 @@ public class BlobStorageController : ControllerBase
         _blobServices = blobServices;
     }
     
-    [HttpPost("create-container")]
-    public async Task<IActionResult> CreateContainer()
+    [HttpPost]
+    [Route("uploadblobfile")]
+    public async Task<IActionResult> UploadBlobFile([FromBody] BlobContentModel model)
     {
-        var container = await _blobServices.CreateSampleContainerAsync();
-        return Ok(container);
+        var result = await _blobServices.UploadBlobFileAsync("user-profile-" ,model.FilePath, model.FileName);
+
+        return Ok(result);
     }
     
-    [HttpPost("create-root-container")]
-    public IActionResult CreateRootContainer()
+    [HttpGet]
+    [Route("listblobs")]
+    public async Task<IActionResult> ListBlobs()
     {
-        _blobServices.CreateRootContainerAsync();
-        return Ok();
+        var result = await _blobServices.ListBlobs();
+
+        return Ok(result);
     }
     
-    [HttpDelete("delete-container")]
-    public async Task<IActionResult> DeleteContainer([FromQuery] string containerName)
+    [HttpGet]
+    [Route("getblobfile")]
+    public async Task<IActionResult> GetBlobFile([FromQuery] string url)
     {
-        await _blobServices.DeleteSampleContainerAsync(containerName);
+        BlobObject result = await _blobServices.GetBlobFile(url);
+
+        return File(result.Content, result.ContentType);
+    }
+    
+    [HttpDelete]
+    [Route("deleteblobfile")]
+    public IActionResult DeleteBlobFile([FromQuery] string url)
+    {
+        _blobServices.DeleteBlob(url);
         return Ok();
     }
 }

@@ -1,79 +1,81 @@
-﻿using Azure;
+﻿using api.Models.Azure.Azure_Blob_Storage;
 using Azure.Storage.Blobs;
+using Azure.Storage.Blobs.Models;
 
 namespace api.Services.AzureServices.BlobStrorage;
 
 public class BlobServices : IBlobServices
 {
     private readonly BlobServiceClient _blobServiceClient;
+    private BlobContainerClient _blobContainerClient;
+    public static readonly List<string> ImageExtensions =
+        [".JPG", ".JPEG", ".PNG", ".GIF", ".BMP", ".TIFF", ".SVG", ".WEBP"];
 
     public BlobServices(BlobServiceClient blobServiceClient)
     {
         _blobServiceClient = blobServiceClient;
+        _blobContainerClient = blobServiceClient.GetBlobContainerClient("user-profile-images");
     }
     
-    public async Task<BlobContainerClient> CreateSampleContainerAsync()
+    public async Task<string> UploadBlobFileAsync(string blobContainerName ,string filePath, string fileName)
     {
-        // Name the sample container based on new GUID to ensure uniqueness.
-        // The container name must be lowercase.
-        string containerName = "container-" + Guid.NewGuid();
+        var blobContainerClient = _blobServiceClient.GetBlobContainerClient(blobContainerName);
+        var blobClient = blobContainerClient.GetBlobClient(fileName);
+        var status = await blobClient.UploadAsync(filePath);
 
-        try
-        {
-            // Create the container
-            BlobContainerClient container = await _blobServiceClient.CreateBlobContainerAsync(containerName);
-
-            if (await container.ExistsAsync())
-            {
-                Console.WriteLine("Created container {0}", container.Name);
-                return container;
-            }
-        }
-        catch (RequestFailedException e)
-        {
-            Console.WriteLine("HTTP error code {0}: {1}",
-                e.Status, e.ErrorCode);
-            Console.WriteLine(e.Message);
-        }
-
-        return null;
+        return blobClient.Uri.AbsoluteUri;
     }
 
-    public void CreateRootContainerAsync()
+    public async Task<List<string>> ListBlobs()
     {
+        var listBlob = new List<string>();
+
+        await foreach (var blobItem in _blobContainerClient.GetBlobsAsync())
+        {
+            listBlob.Add(blobItem.Name);
+        }
+
+        return listBlob;
+    }
+
+    public async Task<BlobObject> GetBlobFile(string url)
+    {
+        var fileName = new Uri(url).Segments.LastOrDefault();
+
         try
         {
-            // Create the root container or handle the exception if it already exists
-            BlobContainerClient container =  _blobServiceClient.CreateBlobContainer("$root");
-
-            if (container.Exists())
+            var blobClient = _blobContainerClient.GetBlobClient(fileName);
+            if (await blobClient.ExistsAsync())
             {
-                Console.WriteLine("Created root container.");
+                BlobDownloadResult content = await blobClient.DownloadContentAsync();
+                var downloadData = content.Content.ToStream();
+
+                if (ImageExtensions.Contains(Path.GetExtension(fileName.ToUpperInvariant())))
+                {
+                    var extension = Path.GetExtension(fileName);
+                    return new BlobObject { Content = downloadData, ContentType = "image/" + extension.Remove(0, 1) };
+                }
+                else
+                {
+                    return new BlobObject { Content = downloadData, ContentType = content.Details.ContentType };
+                }
+            }
+            else
+            {
+                return null;
             }
         }
-        catch (RequestFailedException e)
+        catch (Exception e)
         {
-            Console.WriteLine("HTTP error code {0}: {1}",
-                e.Status, e.ErrorCode);
-            Console.WriteLine(e.Message);
+            Console.WriteLine(e);
+            throw;
         }
     }
 
-    public async Task DeleteSampleContainerAsync(string containerName)
+    public async void DeleteBlob(string path)
     {
-        BlobContainerClient container = _blobServiceClient.GetBlobContainerClient(containerName);
-
-        try
-        {
-            // Delete the specified container and handle the exception.
-            await container.DeleteAsync();
-        }
-        catch (RequestFailedException e)
-        {
-            Console.WriteLine("HTTP error code {0}: {1}",
-                e.Status, e.ErrorCode);
-            Console.WriteLine(e.Message);
-            Console.ReadLine();
-        }
+        var fileName = new Uri(path).Segments.LastOrDefault();
+        var blobClient = _blobContainerClient.GetBlobClient(fileName);
+        await blobClient.DeleteIfExistsAsync();
     }
 }
