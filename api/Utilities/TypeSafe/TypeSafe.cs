@@ -27,6 +27,11 @@ public class TypeSafe
         public const int Update = 3;
         public const int Patch = 4;
         public const int Delete = 5;
+        
+        public static List<int> GetAdminPermissions()
+        {
+            return [ Read, Write, Update, Patch, Delete ];
+        }
     }
     
     public static string[] GetAdminPermissions()
@@ -52,5 +57,21 @@ public class TypeSafe
         public const string FullControlPolicy = "FullControlPolicy";
 
         public const string GenericPolicy = "GenericPolicy";
+    }
+    
+    public static class Microsoft
+    {
+        public const string RolePath = "http://schemas.microsoft.com/ws/2008/06/identity/claims/role";
+    }
+    
+    public static class AuthorizationPayload
+    {
+        public const string Permissions = "Permissions";
+    }
+    
+    public static class CookiesName
+    {
+        public static string Token = "X-ACCESS-TOKEN";
+        public static string RefreshToken = "X-REFRESH-TOKEN";
     }
 }

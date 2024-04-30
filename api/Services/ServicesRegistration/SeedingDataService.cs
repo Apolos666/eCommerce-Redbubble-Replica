@@ -1,5 +1,7 @@
 ﻿using api.Data;
+using api.Helper;
 using api.Models.Identity;
+using api.Models.TypeSafe;
 using Microsoft.AspNetCore.Identity;
 
 namespace api.Services.ServicesRegistration;
@@ -23,7 +25,10 @@ public static class SeedingDataService
             // // if (!userManager.Users.Any())
             // // {
             // // Creating User Entities
-            // var adminUser = new ApplicationIdentityUser() { UserName = "admin", Email = "admin@test.com" };
+            var adminUser = new ApplicationIdentityUser() { UserName = "admin", Email = "admin@test.com" };
+            await userManager.CreateAsync(adminUser, "Saogathe2003");
+            await userManager.AddToRoleAsync(adminUser, TypeSafe.Roles.Admin);
+            await userManager.AddClaimAsync(adminUser, AuthorizationHelper.GetFullAccessClaims(TypeSafe.Controller.PaymentType));
             // var contributorUser = new ApplicationIdentityUser() { UserName = "cont", Email = "c@test.com" };
             // var user = new ApplicationIdentityUser() { UserName = "user", Email = "user@test.com" };
             //

@@ -1,12 +1,12 @@
 <script setup>
 import {ref} from "vue";
 import UserProfileServices from "@/services/User/UserProfileServices.js";
-import {useForm} from "vee-validate";
 import {Icon} from "@iconify/vue";
 
 defineOptions({
   inheritAttrs: false
 })
+
 
 const { handleSubmit, isSubmitting} = useForm();
 

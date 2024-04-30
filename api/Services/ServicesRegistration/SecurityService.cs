@@ -1,9 +1,11 @@
 ﻿using System.Text;
 using api.Data;
 using api.Extensions;
+using api.Infrastructure.Authorization.Requirements.PaymentTypePolicy;
 using api.Models.Identity;
 using api.Models.Identity.Authentication;
 using api.Models.Security;
+using api.Models.TypeSafe;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
@@ -17,13 +19,13 @@ public static class SecurityService
         return services.AddDefaultIdentity<ApplicationIdentityUser>(options =>
             {
                 // Sign in settings
-                options.SignIn.RequireConfirmedAccount = true;
+                options.SignIn.RequireConfirmedAccount = false;
 
                 // Password settings
-                options.Password.RequireDigit = false;
-                options.Password.RequireLowercase = false;
+                options.Password.RequireDigit = true;
+                options.Password.RequireLowercase = true;
+                options.Password.RequireUppercase = true;
                 options.Password.RequireNonAlphanumeric = false;
-                options.Password.RequireUppercase = false;
                 options.Password.RequiredLength = 6;
                 options.Password.RequiredUniqueChars = 0;
 
@@ -35,7 +37,7 @@ public static class SecurityService
                 // User settings
                 options.User.AllowedUserNameCharacters =
                     "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
-                options.User.RequireUniqueEmail = false;
+                options.User.RequireUniqueEmail = true;
             })
             .AddRoles<IdentityRole>()
             .AddEntityFrameworkStores<ApplicationDbContext>();
@@ -58,10 +60,21 @@ public static class SecurityService
                     ValidateIssuer = true,
                     ValidateAudience = true,
                     RequireExpirationTime = true,
+                    ValidateLifetime = true,
                     ValidateIssuerSigningKey = true,
                     ValidIssuer = jwtConfig.Issuer,
                     ValidAudience = jwtConfig.Audience,
+                    ClockSkew = TimeSpan.Zero,
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtConfig.Key))
+                };
+
+                options.Events = new JwtBearerEvents()
+                {
+                    OnMessageReceived = context =>
+                    {
+                        context.Token = context.Request.Cookies[TypeSafe.CookiesName.Token];
+                        return Task.CompletedTask;
+                    }
                 };
             });
 

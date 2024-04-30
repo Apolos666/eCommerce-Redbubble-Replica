@@ -2,8 +2,6 @@
 
 import Block from "@/components/Utilities/Block.vue";
 import UserAvatarForm from "@/components/User/UserAvatarForm.vue";
-
-
 </script>
 
 <template>

@@ -13,10 +13,11 @@ builder.Configuration.GetSection("DatabaseConfig").Bind(dbConfig);
 var jwtConfig = new JwtConfiguration();
 builder.Configuration.GetSection("JwtConfig").Bind(jwtConfig);
 builder.Services.AddSingleton(jwtConfig);
-
 builder.Services.AddApplicationRepositories(dbConfig);
 builder.Services.AddApplicationServices();
+builder.Services.AddRequirementHandler();
 builder.Services.AddApplicationIdentity();
+// builder.Services.AddCookiePolicy();
 builder.Services.AddApplicationJwtAuthentication(jwtConfig);
 builder.Services.AddApplicationAuthorization();
 var corsConfig = new CorsConfig("VuejsWebApp", "http://localhost:5173");
@@ -26,6 +27,7 @@ builder.Services.AddThirdPartyServices();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddControllers();
 builder.Services.AddProblemDetails();
+builder.Services.AddHttpContextAccessor();
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 
 var app = builder.Build();
@@ -42,14 +44,14 @@ if (app.Environment.IsDevelopment())
     // app.UseSwaggerUI();
 }
 
+app.UseCors("VuejsWebApp");
+
 app.UseAuthentication();
 app.UseAuthorization();
 
 app.UseHttpsRedirection();
 
 app.MapControllers();
-
-app.UseCors("VuejsWebApp");
 
 await app.SeedDataAsync();
 

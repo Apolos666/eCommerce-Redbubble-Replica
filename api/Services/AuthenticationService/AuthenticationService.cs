@@ -1,12 +1,18 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 using api.DTOs.IdentityDTOs;
 using api.Helper;
 using api.Models.Identity;
 using api.Models.Identity.Authentication;
+using api.Models.Security;
+using api.Models.TypeSafe;
+using AutoMapper;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json;
 
 namespace api.Services;
 
@@ -15,68 +21,140 @@ public class AuthenticationService : IAuthenticationService
     private readonly UserManager<ApplicationIdentityUser> _userManager;
     private readonly RoleManager<IdentityRole> _roleManager;
     private readonly IHttpContextAccessor _httpContext;
+    private readonly IMapper _mapper;
 
     public AuthenticationService(
-        UserManager<ApplicationIdentityUser> userManager, 
-        RoleManager<IdentityRole> roleManager, 
-        IHttpContextAccessor httpContext)
+        UserManager<ApplicationIdentityUser> userManager,
+        RoleManager<IdentityRole> roleManager,
+        IHttpContextAccessor httpContext,
+        IMapper mapper)
     {
         _userManager = userManager;
         _roleManager = roleManager;
         _httpContext = httpContext;
+        _mapper = mapper;
     }
-    
-    
+
+
     public Task<bool> AddUserClaim(string user, Claim claim)
     {
         throw new NotImplementedException();
     }
 
-    public async Task<string> GenerateTokenString(string userEmail, JwtConfiguration jwtConfig)
+    public async Task<bool> AddUserRole(ApplicationIdentityUser user, string role)
     {
-        var claims = await GetClaims(userEmail);
+        var addToRoleResult = await _userManager.AddToRoleAsync(user, role);
+
+        return addToRoleResult.Succeeded;
+    }
+
+    public async Task<string> GenerateTokenString(ApplicationIdentityUser user, JwtConfiguration jwtConfig)
+    {
+        var claims = await GetClaims(user);
 
         var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtConfig.Key));
 
         var signingCred = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha512Signature);
-        
+
         var securityTokenDescriptor = new SecurityTokenDescriptor
         {
             Subject = new ClaimsIdentity(claims),
-            Issuer =  jwtConfig.Issuer,
+            Issuer = jwtConfig.Issuer,
             Audience = jwtConfig.Audience,
             Expires = DateTime.Now.AddMinutes(jwtConfig.ExpiresMin),
             SigningCredentials = signingCred
         };
-        
+
         var tokenHandler = new JwtSecurityTokenHandler();
         var token = tokenHandler.CreateToken(securityTokenDescriptor);
         return tokenHandler.WriteToken(token);
     }
-    
-    private async Task<List<Claim>> GetClaims(string userEmail)
-    {
-        var user = await _userManager.FindByEmailAsync(userEmail); 
 
-        var claims = new List<Claim>()
+    public void WriteAccessToken(string accessToken)
+    {
+        _httpContext.HttpContext?.Response.Cookies.Append(TypeSafe.CookiesName.Token, accessToken,
+            new CookieOptions
+            {
+                Expires = DateTime.Now.AddMinutes(60),
+                HttpOnly = true,
+                Secure = true,
+                SameSite = SameSiteMode.Strict,
+                IsEssential = true,
+            });
+    }
+
+    public RefreshToken GenerateRefreshToken()
+    {
+        var refreshToken = new RefreshToken()
         {
-            new Claim(ClaimTypes.Name, userEmail),
+            Token = Convert.ToBase64String(RandomNumberGenerator.GetBytes(64)),
+            Created = DateTime.Now,
+            Expires = DateTime.Now.AddDays(30),
         };
 
-        claims.AddRange(GetClaimsSeperated(await _userManager.GetClaimsAsync(user)));
-        var roles = await _userManager.GetRolesAsync(user);
+        return refreshToken;
+    }
+
+    public async Task WriteRefreshToken(RefreshToken refreshToken, ApplicationIdentityUser? user)
+    {
+        _httpContext.HttpContext?.Response.Cookies.Append(TypeSafe.CookiesName.RefreshToken, refreshToken.Token,
+            new CookieOptions()
+            {
+                Expires = refreshToken.Expires,
+                HttpOnly = true,
+                Secure = true,
+                SameSite = SameSiteMode.Strict,
+                IsEssential = true,
+            });
         
+        user.RefreshToken = refreshToken.Token;
+        user.CreatedTime = refreshToken.Created;
+        user.ExpiresTime = refreshToken.Expires;
+        
+        await _userManager.UpdateAsync(user);
+    }
+
+    public async Task<ApplicationIdentityUser?> GetUserByRefreshToken(string refreshToken)
+    {
+        return await _userManager.Users.FirstOrDefaultAsync(u => u.RefreshToken == refreshToken);
+    }
+
+    public async Task<GetMe?> GetMe(string userName)
+    {
+        var user = await _userManager.FindByNameAsync(userName);
+        
+        var getMe = _mapper.Map<GetMe>(user);
+
+        return getMe;
+    }
+
+    private async Task<List<Claim>> GetClaims(ApplicationIdentityUser user)
+    {
+        var claims = new List<Claim>()
+        {
+            new Claim(ClaimTypes.Name, user.UserName),
+        };
+
+        var roles = await _userManager.GetRolesAsync(user);
         foreach (var role in roles)
         {
             claims.Add(new Claim(ClaimTypes.Role, role));
-        
-            // var identityRole = await _roleManager.FindByNameAsync(role);
-            // claims.AddRange(GetClaimsSeperated(await _roleManager.GetClaimsAsync(identityRole)));
         }
+
+        var permissions = new Dictionary<string, List<string>>();
+        var userClaims = await _userManager.GetClaimsAsync(user);
+        foreach (var claim in userClaims)
+        {
+            permissions[claim.Type] = claim.DeserializePermissions().Select(p => p.ToString()).ToList();
+        }
+
+        claims.Add(new Claim("Permissions", JsonConvert.SerializeObject(permissions)));
+
+        // claims.AddRange(GetClaimsSeperated(await _userManager.GetClaimsAsync(user)));
 
         return claims;
     }
-    
+
     private List<Claim> GetClaimsSeperated(IList<Claim> claims)
     {
         var result = new List<Claim>();
@@ -84,17 +162,23 @@ public class AuthenticationService : IAuthenticationService
         {
             result.AddRange(claim.DeserializePermissions().Select(t => new Claim(claim.Type, t.ToString())));
         }
+
         return result;
     }
 
-    public async Task<bool> Login(UserLogin credentials)
+    public async Task<(bool IsSuccess, ApplicationIdentityUser? User)> Login(UserLogin credentials)
     {
-        var user = await _userManager.FindByEmailAsync(credentials.UserEmail);
+        var user = await _userManager.FindByEmailAsync(credentials.UserOrEmail) ??
+                   await _userManager.FindByNameAsync(credentials.UserOrEmail);
 
-        if (user is not null)   
-            return await _userManager.CheckPasswordAsync(user, credentials.Password);
+        if (user is not null)
+        {
+            var result = await _userManager.CheckPasswordAsync(user, credentials.Password);
+            return (result, user);
+        }
+            
 
-        return false;
+        return (false, null);
     }
 
     public Task Logout()
@@ -102,16 +186,21 @@ public class AuthenticationService : IAuthenticationService
         throw new NotImplementedException();
     }
 
-    public async Task<bool> RegisterUser(UserRegister user)
+    public async Task<(bool IsSuccess, ApplicationIdentityUser? User)> RegisterUser(UserRegister user)
     {
         var identityUser = new ApplicationIdentityUser()
         {
             Email = user.UserEmail,
-            PhoneNumber = user.UserPhone,
             UserName = user.UserName,
         };
-        
+
         var result = await _userManager.CreateAsync(identityUser, user.Password);
-        return result.Succeeded;
+
+        if (result.Succeeded)
+        {
+            return (await AddUserRole(identityUser, TypeSafe.Roles.User), identityUser);
+        }
+
+        return (false, null);
     }
 }

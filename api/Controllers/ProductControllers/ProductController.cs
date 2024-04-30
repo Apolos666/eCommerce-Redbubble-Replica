@@ -8,7 +8,6 @@ namespace api.Controllers;
 
 [Route("api/[controller]s")]
 [ApiController]
-[Authorize(Policy = TypeSafe.Policies.FullControlPolicy)]
 public class ProductController : ControllerBase
 {
     private readonly IProductRepository _productRepository;

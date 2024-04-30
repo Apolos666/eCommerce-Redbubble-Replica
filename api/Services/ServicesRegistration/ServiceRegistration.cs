@@ -1,5 +1,6 @@
 ﻿using api.Configurations;
 using api.Data;
+using api.Infrastructure.Authorization.Requirements.PaymentTypePolicy;
 using api.Repositories.AttributeTypeModel;
 using api.Repositories.ColorModel;
 using api.Repositories.Order_Repositories.OrderStatus;
@@ -15,6 +16,11 @@ using api.Repositories.ProductSizeVariation;
 using api.Repositories.ShippingMethod;
 using api.Repositories.SizeCategory;
 using api.Repositories.SizeOption;
+using api.Repositories.User_Repositories.UserImage;
+using api.Services.AzureServices;
+using api.Services.AzureServices.BlobStrorage;
+using api.Services.AzureServices.BlobStrorage.UserProfile;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 
 namespace api.Services;
@@ -46,7 +52,11 @@ public static class ServiceRegistration
             .AddScoped<IPaymentTypeRepository, PaymentTypeRepository>()
             .AddScoped<IShippingMethodRepository, ShippingMethodReopository>()
             .AddScoped<IOrderStatusRepository, OrderStatusRepository>()
-            .AddScoped<IUserPaymentMethodRepository, UserPaymentMethodRepository>();
+            .AddScoped<IUserPaymentMethodRepository, UserPaymentMethodRepository>()
+            .AddScoped<IUserImageRepository, UserImageRepository>();
+
+        service.AddScoped<IBlobServices, BlobServices>()
+            .AddScoped<IUserProfileBlobServices, UserProfileBlobServices>();
         
 
         return service;
@@ -59,11 +69,19 @@ public static class ServiceRegistration
         return service;
     }
 
+    public static IServiceCollection AddRequirementHandler(this IServiceCollection service)
+    {
+        service.AddSingleton<IAuthorizationHandler, PaymentTypeRequirementHandler>();
+
+        return service;
+    }
+
     public static IServiceCollection AddThirdPartyServices(this IServiceCollection services)
     {
         services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
         services.AddSwaggerGen();
-
+        services.AddAzureServices();
+        
         return services;
     }
 
