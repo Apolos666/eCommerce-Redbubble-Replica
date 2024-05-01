@@ -2,9 +2,9 @@
 
 import Block from "@/components/Utilities/Block.vue";
 import UserAvatarForm from "@/components/User/UserAvatarForm.vue";
-import {useUserProfileStore} from "@/stores/User/UserProfile/UserProfileStore.js";
+import {useUserProfileImageStore} from "@/stores/User/UserProfile/UserProfileImageStore.js";
 
-const userProfile = useUserProfileStore();
+const userProfile = useUserProfileImageStore();
 </script>
 
 <template>

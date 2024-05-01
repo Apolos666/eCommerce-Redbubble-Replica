@@ -4,5 +4,7 @@ namespace api.Repositories.User_Repositories.UserImage;
 
 public interface IUserImageRepository
 {
-    Task<GetUserImage> AddUserImage(AddUserImage addUserImage);
+    Task<GetUserImage> AddUserImageAsync(AddUserImage addUserImage);
+    Task<string> GetCurrentActiveProfileImageUrlAsync(string userName);
+    Task<bool> DeactiveAllProfileImagesAsync(string userId);
 }

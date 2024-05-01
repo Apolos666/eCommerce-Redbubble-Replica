@@ -3,13 +3,13 @@ import {ref} from "vue";
 import UserProfileServices from "@/services/User/UserProfileServices.js";
 import {Icon} from "@iconify/vue";
 import {useForm} from "vee-validate";
-import {useUserProfileStore} from "@/stores/User/UserProfile/UserProfileStore.js";
+import {useUserProfileImageStore} from "@/stores/User/UserProfile/UserProfileImageStore.js";
 
 defineOptions({
   inheritAttrs: false
 })
 
-const userProfile = useUserProfileStore();
+const userProfileImagePinia = useUserProfileImageStore();
 
 const selectedFile = ref(null);
 
@@ -25,7 +25,7 @@ const handleFileUpload = async (event) => {
 
   const result = await UserProfileServices.uploadProfileImage(formData);
   const imageUrl = await UserProfileServices.getUserProfileImage(result);
-  userProfile.updateUserProfileImage(imageUrl);
+  userProfileImagePinia.updateUserProfileImage(imageUrl);
 
   selectedFile.value = null;
 }

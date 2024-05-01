@@ -1,5 +1,8 @@
 <script setup>
+import {useUserProfileImageStore} from "@/stores/User/UserProfile/UserProfileImageStore.js";
+
 const props = defineProps(['user'])
+const userProfileImagePinia = useUserProfileImageStore();
 
 </script>
 
@@ -7,7 +10,7 @@ const props = defineProps(['user'])
   <div class="p-8 shadow">
     <div class="flex items-center ">
       <div class="bg-white border-[1px] border-green-400 rounded-full p-4">
-        <img class="w-16 h-16" src="../../../public/favicon.ico" alt="">
+        <img class="w-16 h-16" :src="userProfileImagePinia.userProfileImage" alt="">
       </div>
       <div class="ml-10">
         <div class="font-bold text-2xl">About {{ props.user.userName}}</div>

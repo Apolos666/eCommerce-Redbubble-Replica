@@ -8,4 +8,6 @@ public class AddUserImage
     public string UserId { get; set; }
     [Required]
     public string ImageUrl { get; set; }
+    [Required]
+    public bool IsProfileImage { get; set; }
 }

@@ -2,10 +2,11 @@
 import SidebarCategory from "@/components/Home/SidebarCategory.vue";
 import {inject} from "vue";
 import {Icon} from "@iconify/vue";
+import {useUserProfileImageStore} from "@/stores/User/UserProfile/UserProfileImageStore.js";
 
 const isOpen = inject('isOpen');
-
 const props = defineProps(['user']);
+const userProfileImagePinia = useUserProfileImageStore();
 
 </script>
 
@@ -33,7 +34,7 @@ const props = defineProps(['user']);
             <div v-else>
               <RouterLink @click="isOpen = false" :to="{ name: 'profile'}" class="flex items-center justify-between">
                 <div class="flex items-center">
-                  <img src="../../../public/favicon.ico" alt="">
+                  <img :src="userProfileImagePinia.userProfileImage" alt="">
                   <div class="ml-4 font-bold">{{ props.user.userName }}</div>
                 </div>
                 <div>

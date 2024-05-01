@@ -12,4 +12,5 @@ public class UserImage
     public string UserId { get; set; }
     public ApplicationIdentityUser IdentityUser { get; set; }
     public string ImageUrl { get; set; }
+    public bool IsProfileImage { get; set; }
 }

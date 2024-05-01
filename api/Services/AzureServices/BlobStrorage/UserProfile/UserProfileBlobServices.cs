@@ -39,14 +39,17 @@ public class UserProfileBlobServices : IUserProfileBlobServices
         {
             throw new Exception("User not found");
         }
+
+        await _userImageRepository.DeactiveAllProfileImagesAsync(user.Id);
         
         var userImage = new AddUserImage()
         {
             UserId = user.Id,
-            ImageUrl = absolutePath
+            ImageUrl = absolutePath,
+            IsProfileImage = true
         };
 
-        var result = await _userImageRepository.AddUserImage(userImage);
+        var result = await _userImageRepository.AddUserImageAsync(userImage);
         return result.ImageUrl;
     }
 
