@@ -31,6 +31,15 @@ public class UserImageRepository : IUserImageRepository
         return _mapper.Map<GetUserImage>(result.Entity);
     }
 
+    public async Task<List<string>> GetAllProfileImagesAsync(string userName)
+    {
+        var user = await _userManager.FindByNameAsync(userName);
+
+        var userImages = await _context.UserImages.Where(ui => ui.UserId == user.Id).ToListAsync();
+        
+        return userImages.Select(ui => ui.ImageUrl).ToList();
+    }
+
     public async Task<string> GetCurrentActiveProfileImageUrlAsync(string userName)
     {
         var user = await _userManager.FindByNameAsync(userName);
@@ -50,6 +59,24 @@ public class UserImageRepository : IUserImageRepository
         var userImage = await _context.UserImages.Where(ui => ui.UserId == userId).ToListAsync();
 
         userImage.ForEach(ui => ui.IsProfileImage = false);
+
+        await _context.SaveChangesAsync();
+
+        return true;
+    }
+
+    public async Task<bool> SetActiveProfileImageAsync(string userName, string imageUrl)
+    {
+        var user = await _userManager.FindByNameAsync(userName);
+        
+        var userImage = await _context.UserImages.FirstOrDefaultAsync(ui => ui.UserId == user.Id && ui.ImageUrl == imageUrl);
+        
+        if (userImage is null)
+            return false;
+
+        await DeactiveAllProfileImagesAsync(user.Id);
+        
+        userImage.IsProfileImage = true;
 
         await _context.SaveChangesAsync();
 

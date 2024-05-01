@@ -11,5 +11,28 @@ export default {
         } catch (error) {
             console.log(error)
         }
+    },
+    async getAllProfileImages() {
+        try {
+            const response = await API().get("/userimages/get-all-profile-images", {
+                withCredentials: true,
+            });
+
+            return response.data;
+        } catch (error) {
+            console.log(error)
+        }
+    },
+    async setActiveProfileImage(imageUrl) {
+        try {
+            const response = await API().post("/userimages/set-active-profile-image", null, {
+                params: {
+                    imageUrl: imageUrl
+                },
+                withCredentials: true
+            });
+        } catch (error) {
+            console.log(error)
+        }
     }
 }

@@ -26,4 +26,26 @@ public class UserImageController : ControllerBase
 
         return Ok(result);
     }
+    
+    [HttpGet]
+    [Route("get-all-profile-images")]
+    public async Task<IActionResult> GetAllProfileImages()
+    {
+        var userName = HttpContext.User.Identity?.Name;
+        
+        var result = await _userImageRepository.GetAllProfileImagesAsync(userName);
+
+        return Ok(result);
+    }
+    
+    [HttpPost]
+    [Route("set-active-profile-image")]
+    public async Task<ActionResult<bool>> SetActiveProfileImageAsync([FromQuery] string imageUrl)
+    {
+        var userName = HttpContext.User.Identity?.Name;
+        
+        var result = await _userImageRepository.SetActiveProfileImageAsync(userName, imageUrl);
+        
+        return Ok(result);
+    }
 }
