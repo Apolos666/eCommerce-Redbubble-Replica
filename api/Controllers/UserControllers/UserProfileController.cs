@@ -1,5 +1,4 @@
-﻿using api.DTOs.User_DTOs.UserImageDTOs;
-using api.Services.AzureServices.BlobStrorage;
+﻿using api.Services.AzureServices.BlobStrorage.UserProfile;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -38,5 +37,14 @@ public class UserProfileController : ControllerBase
         System.IO.File.Delete(tempPath);
         
         return Ok(result);
+    }
+    
+    [HttpGet]
+    [Route("get-profile-image")]
+    public async Task<IActionResult> GetProfileImageAsync([FromQuery] string url)
+    {
+        var result = await _userProfileBlobServices.GetProfileImageUrlAsync(url);
+        
+        return File(result.Content, result.ContentType);
     }
 }

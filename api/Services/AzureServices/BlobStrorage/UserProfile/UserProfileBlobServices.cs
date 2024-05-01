@@ -1,6 +1,7 @@
 ﻿using api.Data;
 using api.DTOs.User_DTOs.UserImageDTOs;
 using api.Helper;
+using api.Models.Azure.Azure_Blob_Storage;
 using api.Models.Identity;
 using api.Repositories.User_Repositories.UserImage;
 using Microsoft.AspNetCore.Identity;
@@ -47,5 +48,13 @@ public class UserProfileBlobServices : IUserProfileBlobServices
 
         var result = await _userImageRepository.AddUserImage(userImage);
         return result.ImageUrl;
+    }
+
+    public async Task<BlobObject> GetProfileImageUrlAsync(string imageUrl)
+    {
+        var result = await _blobServices.GetBlobFileAsync(
+            AzureBlobContainerHelper.ContainerName.UserProfileImages, imageUrl);
+
+        return result;
     }
 }

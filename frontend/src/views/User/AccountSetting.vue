@@ -2,6 +2,9 @@
 
 import Block from "@/components/Utilities/Block.vue";
 import UserAvatarForm from "@/components/User/UserAvatarForm.vue";
+import {useUserProfileStore} from "@/stores/User/UserProfile/UserProfileStore.js";
+
+const userProfile = useUserProfileStore();
 </script>
 
 <template>
@@ -11,7 +14,7 @@ import UserAvatarForm from "@/components/User/UserAvatarForm.vue";
   </div>
   <div class="mx-4 mt-6 flex">
     <div class="">
-      <img src="../../../public/favicon.ico" class="w-20 h-20 border-black border-2 rounded-full" alt="">
+      <img :src="userProfile.userProfileImage" class="w-20 h-20 border-black border-2 rounded-full" alt="">
     </div>
     <UserAvatarForm class="ml-4"/>
   </div>

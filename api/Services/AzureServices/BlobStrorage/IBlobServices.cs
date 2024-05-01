@@ -6,7 +6,7 @@ namespace api.Services.AzureServices.BlobStrorage;
 public interface IBlobServices
 {
     Task<string> UploadBlobFileAsync(string blobContainerName ,string filePath, string fileName);
-    Task<List<string>> ListBlobs();
-    Task<BlobObject> GetBlobFile(string url);
+    Task<List<string>> ListBlobsAsync();
+    Task<BlobObject> GetBlobFileAsync(string blobContainerName, string url);
     void DeleteBlob(string path);
 }

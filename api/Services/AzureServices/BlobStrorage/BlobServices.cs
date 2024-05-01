@@ -26,7 +26,7 @@ public class BlobServices : IBlobServices
         return blobClient.Uri.AbsoluteUri;
     }
 
-    public async Task<List<string>> ListBlobs()
+    public async Task<List<string>> ListBlobsAsync()
     {
         var listBlob = new List<string>();
 
@@ -38,38 +38,13 @@ public class BlobServices : IBlobServices
         return listBlob;
     }
 
-    public async Task<BlobObject> GetBlobFile(string url)
+    public async Task<BlobObject> GetBlobFileAsync(string blobContainerName, string url)
     {
-        var fileName = new Uri(url).Segments.LastOrDefault();
-
-        try
-        {
-            var blobClient = _blobContainerClient.GetBlobClient(fileName);
-            if (await blobClient.ExistsAsync())
-            {
-                BlobDownloadResult content = await blobClient.DownloadContentAsync();
-                var downloadData = content.Content.ToStream();
-
-                if (ImageExtensions.Contains(Path.GetExtension(fileName.ToUpperInvariant())))
-                {
-                    var extension = Path.GetExtension(fileName);
-                    return new BlobObject { Content = downloadData, ContentType = "image/" + extension.Remove(0, 1) };
-                }
-                else
-                {
-                    return new BlobObject { Content = downloadData, ContentType = content.Details.ContentType };
-                }
-            }
-            else
-            {
-                return null;
-            }
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine(e);
-            throw;
-        }
+        var blobContainerClient = _blobServiceClient.GetBlobContainerClient(blobContainerName);
+        var fileName = Uri.UnescapeDataString(new Uri(url).Segments.LastOrDefault());
+        var blobClient = blobContainerClient.GetBlobClient(fileName);
+        var blobDownloadInfo = await blobClient.DownloadAsync();
+        return new BlobObject(blobDownloadInfo.Value.Content, blobDownloadInfo.Value.ContentType);
     }
 
     public async void DeleteBlob(string path)

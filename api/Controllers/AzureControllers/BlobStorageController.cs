@@ -1,12 +1,15 @@
-﻿using api.Models.Azure.Azure_Blob_Storage;
+﻿using api.Helper;
+using api.Models.Azure.Azure_Blob_Storage;
 using api.Services.AzureServices.BlobStrorage;
 using Azure.Storage.Blobs;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace api.Controllers.AzureControllers;
 
 [ApiController]
 [Route("api/[controller]")]
+[Authorize]
 public class BlobStorageController : ControllerBase
 {
     private readonly IBlobServices _blobServices;
@@ -29,7 +32,7 @@ public class BlobStorageController : ControllerBase
     [Route("listblobs")]
     public async Task<IActionResult> ListBlobs()
     {
-        var result = await _blobServices.ListBlobs();
+        var result = await _blobServices.ListBlobsAsync();
 
         return Ok(result);
     }
@@ -38,7 +41,8 @@ public class BlobStorageController : ControllerBase
     [Route("getblobfile")]
     public async Task<IActionResult> GetBlobFile([FromQuery] string url)
     {
-        BlobObject result = await _blobServices.GetBlobFile(url);
+        var urlName = url;
+        BlobObject result = await _blobServices.GetBlobFileAsync(AzureBlobContainerHelper.ContainerName.UserProfileImages ,url);
 
         return File(result.Content, result.ContentType);
     }

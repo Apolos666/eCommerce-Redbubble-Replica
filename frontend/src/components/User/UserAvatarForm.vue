@@ -2,15 +2,18 @@
 import {ref} from "vue";
 import UserProfileServices from "@/services/User/UserProfileServices.js";
 import {Icon} from "@iconify/vue";
+import {useForm} from "vee-validate";
+import {useUserProfileStore} from "@/stores/User/UserProfile/UserProfileStore.js";
 
 defineOptions({
   inheritAttrs: false
 })
 
+const userProfile = useUserProfileStore();
+
+const selectedFile = ref(null);
 
 const { handleSubmit, isSubmitting} = useForm();
-
-const selectedFile = ref(null)
 
 const handleFileChange = (event) => {
   selectedFile.value = event.target.files[0];
@@ -21,7 +24,8 @@ const handleFileUpload = async (event) => {
   formData.append('file', selectedFile.value);
 
   const result = await UserProfileServices.uploadProfileImage(formData);
-  console.log(result);
+  const imageUrl = await UserProfileServices.getUserProfileImage(result);
+  userProfile.updateUserProfileImage(imageUrl);
 
   selectedFile.value = null;
 }
