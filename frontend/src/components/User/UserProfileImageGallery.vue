@@ -1,44 +1,12 @@
 <script setup>
+import useUserProfileImageGallery from "@/composables/User/useUserProfileImageGallery.js"
 
-import {onBeforeMount, ref} from "vue";
-import UserImageServices from "@/services/User/UserImageServices.js";
-import UserProfileServices from "@/services/User/UserProfileServices.js";
-import {useUserProfileImageStore} from "@/stores/User/UserProfile/UserProfileImageStore.js";
-
-const userProfile = useUserProfileImageStore();
-
-const userProfileImagesBlob = ref([]);
-const selectedImage = ref({imageBlobUrl: null, absoluteUrl: null});
-const selectedImageIndex = ref(null);
-
-const getUserProfileImages =  async () => {
-  const userImagesUrl = await UserImageServices.getAllProfileImages();
-
-  for (const url of userImagesUrl)
-  {
-    const imageBlobUrl = await UserProfileServices.getUserProfileImage(url);
-    userProfileImagesBlob.value.push({imageBlobUrl: imageBlobUrl, absoluteUrl: url});
-  }
-}
-
-const selectImage = (imageBlobUrl ,absoluteImageUrl, index) => {
-  selectedImage.value.imageBlobUrl = imageBlobUrl;
-  selectedImage.value.absoluteUrl = absoluteImageUrl;
-  selectedImageIndex.value = index;
-}
-
-const saveImage = async () => {
-  if (selectedImage.value === null)
-    alert("Please select an image to save as primary profile picture.");
-
-  const result = await UserImageServices.setActiveProfileImage(selectedImage.value.absoluteUrl);
-  userProfile.updateUserProfileImage(selectedImage.value.imageBlobUrl);
-}
-
-onBeforeMount(() => {
-  getUserProfileImages();
-});
-
+const {
+  userProfileImagesBlob,
+  selectedImageIndex,
+  setSelectedImage,
+  saveImage
+} = useUserProfileImageGallery();
 </script>
 
 <template>
@@ -48,7 +16,7 @@ onBeforeMount(() => {
         :key="index"
         class="w-full h-32 border-black border-2 overflow-hidden"
         :class="[selectedImageIndex === index ? 'border-4 border-blue-400' : '']"
-        @click="selectImage(imageUrl.imageBlobUrl, imageUrl.absoluteUrl, index)"
+        @click="setSelectedImage(imageUrl.imageBlobUrl, imageUrl.absoluteUrl, index)"
     >
       <img :src="imageUrl.imageBlobUrl" alt="">
     </div>
