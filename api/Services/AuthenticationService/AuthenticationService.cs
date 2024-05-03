@@ -9,6 +9,7 @@ using api.Models.Identity.Authentication;
 using api.Models.Security;
 using api.Models.TypeSafe;
 using AutoMapper;
+using Azure.Security.KeyVault.Secrets;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -22,17 +23,22 @@ public class AuthenticationService : IAuthenticationService
     private readonly RoleManager<IdentityRole> _roleManager;
     private readonly IHttpContextAccessor _httpContext;
     private readonly IMapper _mapper;
+    private readonly string _jwtKey;
+    private readonly SecretClient _secretClient;
 
     public AuthenticationService(
         UserManager<ApplicationIdentityUser> userManager,
         RoleManager<IdentityRole> roleManager,
         IHttpContextAccessor httpContext,
-        IMapper mapper)
+        IMapper mapper,
+        SecretClient secretClient)
     {
         _userManager = userManager;
         _roleManager = roleManager;
         _httpContext = httpContext;
         _mapper = mapper;
+        _secretClient = secretClient;
+        _jwtKey = _secretClient.GetSecret("JWTKey").Value.Value;
     }
 
 
@@ -52,7 +58,7 @@ public class AuthenticationService : IAuthenticationService
     {
         var claims = await GetClaims(user);
 
-        var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtConfig.Key));
+        var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtKey));
 
         var signingCred = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha512Signature);
 

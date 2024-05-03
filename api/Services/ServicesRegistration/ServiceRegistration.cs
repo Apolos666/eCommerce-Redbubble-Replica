@@ -20,6 +20,7 @@ using api.Repositories.User_Repositories.UserImage;
 using api.Services.AzureServices;
 using api.Services.AzureServices.BlobStrorage;
 using api.Services.AzureServices.BlobStrorage.UserProfile;
+using Azure.Security.KeyVault.Secrets;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 
@@ -28,11 +29,11 @@ namespace api.Services;
 public static class ServiceRegistration
 {
     public static IServiceCollection AddApplicationRepositories(this IServiceCollection service,
-        DatabaseConfig? databaseConfig)
+        DatabaseConfig databaseConfig, SecretClient secretClient)
     {
         service.AddDbContext<ApplicationDbContext>(options =>
         {
-            options.UseSqlServer(databaseConfig.ConnectionString);
+            options.UseSqlServer(secretClient.GetSecret("ConnectionString").Value.Value);
             options.EnableDetailedErrors(databaseConfig.DetailedErrors); // DetailedErrors is true in development
             options.EnableSensitiveDataLogging(databaseConfig
                 .SensitiveDataLogging); // SensitiveDataLogging is true in development

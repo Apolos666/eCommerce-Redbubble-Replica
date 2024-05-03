@@ -1,11 +1,11 @@
 ﻿using System.Text;
 using api.Data;
 using api.Extensions;
-using api.Infrastructure.Authorization.Requirements.PaymentTypePolicy;
 using api.Models.Identity;
 using api.Models.Identity.Authentication;
 using api.Models.Security;
 using api.Models.TypeSafe;
+using Azure.Security.KeyVault.Secrets;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
@@ -44,8 +44,10 @@ public static class SecurityService
     }
 
     public static IServiceCollection AddApplicationJwtAuthentication(this IServiceCollection service,
-        JwtConfiguration jwtConfig)
+        JwtConfiguration jwtConfig, SecretClient secretClient)
     {
+        var jwtKey = secretClient.GetSecret("JWTKey").Value.Value;
+        
         service
             .AddAuthentication(options =>
             {
@@ -65,7 +67,7 @@ public static class SecurityService
                     ValidIssuer = jwtConfig.Issuer,
                     ValidAudience = jwtConfig.Audience,
                     ClockSkew = TimeSpan.Zero,
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtConfig.Key))
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey))
                 };
 
                 options.Events = new JwtBearerEvents()
@@ -76,10 +78,6 @@ public static class SecurityService
                         return Task.CompletedTask;
                     }
                 };
-            })
-            .AddGoogle(options =>
-            {
-                
             });
 
         return service;
