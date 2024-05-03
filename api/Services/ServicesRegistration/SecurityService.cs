@@ -76,6 +76,10 @@ public static class SecurityService
                         return Task.CompletedTask;
                     }
                 };
+            })
+            .AddGoogle(options =>
+            {
+                
             });
 
         return service;
