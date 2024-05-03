@@ -1,11 +1,26 @@
 using api.Configurations;
+using api.Models.Azure;
 using api.Models.Identity.Authentication;
 using api.Models.Security;
 using api.Services;
 using api.Services.ServicesRegistration;
+using Azure.Identity;
+using Azure.Security.KeyVault.Secrets;
 
 var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;
+
+var keyVault = new KeyVault
+{
+    KeyVaultURL = builder.Configuration["KeyVaultURL"],
+    ClientId = builder.Configuration["ClientId"],
+    ClientSecret = builder.Configuration["ClientSecret"],
+    DirectoryId = builder.Configuration["DirectoryId"]
+};
+var credential = new ClientSecretCredential(keyVault.DirectoryId, keyVault.ClientId, keyVault.ClientSecret);
+builder.Configuration.AddAzureKeyVault(new Uri(keyVault.KeyVaultURL), credential);
+var client = new SecretClient(new Uri(keyVault.KeyVaultURL), credential);
+Console.WriteLine(client.GetSecret("GoolgeClientId").Value.Value.ToString());
 
 var dbConfig = new DatabaseConfig();
 builder.Configuration.GetSection("DatabaseConfig").Bind(dbConfig);
