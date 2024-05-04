@@ -40,13 +40,13 @@ public class UserImageRepository : IUserImageRepository
         return userImages.Select(ui => ui.ImageUrl).ToList();
     }
 
-    public async Task<string> GetCurrentActiveProfileImageUrlAsync(string userName)
+    public async Task<string?> GetCurrentActiveProfileImageUrlAsync(string userName)
     {
         var user = await _userManager.FindByNameAsync(userName);
 
         var userImage = await _context.UserImages.FirstOrDefaultAsync(ui => ui.UserId == user.Id && ui.IsProfileImage);
 
-        return userImage.ImageUrl;
+        return userImage?.ImageUrl;
     }
 
     public async Task<bool> DeactiveAllProfileImagesAsync(string userId)

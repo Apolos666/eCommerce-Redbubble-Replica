@@ -18,7 +18,7 @@ public interface IAuthenticationService
     Task<GetMe?> GetMe(string userName);
     Task<(bool IsSuccess, ApplicationIdentityUser? User)> Login(UserLogin credentials);
     Task Logout();
-    Task<(bool IsSuccess, ApplicationIdentityUser? User)> RegisterUser(UserRegister user);
+    Task<(bool IsSuccess, ApplicationIdentityUser? User, IEnumerable<string>? errors)> RegisterUser(UserRegister user);
     
     
 }

@@ -44,7 +44,7 @@ const onSuccessSubmit = async (values) => {
   })
 
   if (response.status === 200) {
-    await router.push({name: 'home'})
+    await router.push({name: 'login'})
   }
 }
 

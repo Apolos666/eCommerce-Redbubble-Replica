@@ -53,7 +53,7 @@ public class UserProfileBlobServices : IUserProfileBlobServices
         return result.ImageUrl;
     }
 
-    public async Task<BlobObject> GetProfileImageUrlAsync(string imageUrl)
+    public async Task<BlobObject?> GetProfileImageUrlAsync(string imageUrl)
     {
         var result = await _blobServices.GetBlobFileAsync(
             AzureBlobContainerHelper.ContainerName.UserProfileImages, imageUrl);

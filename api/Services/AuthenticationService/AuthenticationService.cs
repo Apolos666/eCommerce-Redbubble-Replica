@@ -20,6 +20,7 @@ namespace api.Services;
 public class AuthenticationService : IAuthenticationService
 {
     private readonly UserManager<ApplicationIdentityUser> _userManager;
+    private readonly SignInManager<ApplicationIdentityUser> _signInManager;
     private readonly RoleManager<IdentityRole> _roleManager;
     private readonly IHttpContextAccessor _httpContext;
     private readonly IMapper _mapper;
@@ -28,12 +29,14 @@ public class AuthenticationService : IAuthenticationService
 
     public AuthenticationService(
         UserManager<ApplicationIdentityUser> userManager,
+        SignInManager<ApplicationIdentityUser> signInManager,
         RoleManager<IdentityRole> roleManager,
         IHttpContextAccessor httpContext,
         IMapper mapper,
         SecretClient secretClient)
     {
         _userManager = userManager;
+        _signInManager = signInManager;
         _roleManager = roleManager;
         _httpContext = httpContext;
         _mapper = mapper;
@@ -179,11 +182,14 @@ public class AuthenticationService : IAuthenticationService
 
         if (user is not null)
         {
-            var result = await _userManager.CheckPasswordAsync(user, credentials.Password);
-            return (result, user);
+            var result = await _signInManager.CheckPasswordSignInAsync(user, credentials.Password, false);
+            if (result.Succeeded)
+            {
+                await _signInManager.PasswordSignInAsync(user, credentials.Password, false, false);
+                return (true, user);
+            }
         }
-            
-
+        
         return (false, null);
     }
 
@@ -192,7 +198,7 @@ public class AuthenticationService : IAuthenticationService
         throw new NotImplementedException();
     }
 
-    public async Task<(bool IsSuccess, ApplicationIdentityUser? User)> RegisterUser(UserRegister user)
+    public async Task<(bool IsSuccess, ApplicationIdentityUser? User, IEnumerable<string>? errors)> RegisterUser(UserRegister user)
     {
         var identityUser = new ApplicationIdentityUser()
         {
@@ -201,12 +207,17 @@ public class AuthenticationService : IAuthenticationService
         };
 
         var result = await _userManager.CreateAsync(identityUser, user.Password);
+        var errors = result.Errors.Select(e => e.Description);
 
         if (result.Succeeded)
         {
-            return (await AddUserRole(identityUser, TypeSafe.Roles.User), identityUser);
+            var addRoleResult = await AddUserRole(identityUser, TypeSafe.Roles.User);
+            if (addRoleResult)
+                return (true, identityUser, null);
+            
+            return (false, null, ["Could not add user to role."]);
         }
-
-        return (false, null);
+        
+        return (false, null, errors);
     }
 }

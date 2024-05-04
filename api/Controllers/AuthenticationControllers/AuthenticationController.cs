@@ -4,6 +4,7 @@ using api.Models.Identity.Authentication;
 using api.Models.TypeSafe;
 using api.Services;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace api.Controllers.AuthenticationControllers;
@@ -15,15 +16,18 @@ public class AuthenticationController : ControllerBase
     private readonly IAuthenticationService _authenticationService;
     private readonly JwtConfiguration _jwtConfiguration;
     private readonly IHttpContextAccessor _httpContextAccessor;
+    private readonly SignInManager<ApplicationIdentityUser> _signInManager;
 
     public AuthenticationController(
         IAuthenticationService authenticationService,
         JwtConfiguration jwtConfiguration,
-        IHttpContextAccessor httpContextAccessor)
+        IHttpContextAccessor httpContextAccessor, 
+        SignInManager<ApplicationIdentityUser> signInManager)
     {
         _authenticationService = authenticationService;
         _jwtConfiguration = jwtConfiguration;
         _httpContextAccessor = httpContextAccessor;
+        _signInManager = signInManager;
     }
 
     [HttpPost("login")]
@@ -35,7 +39,7 @@ public class AuthenticationController : ControllerBase
         var result = await _authenticationService.Login(credentials);
         if (!result.IsSuccess)
             return Unauthorized("Invalid credentials.");
-
+        
         await GenerateAndWriteTokens(result.User);
 
         return Ok();
@@ -48,11 +52,18 @@ public class AuthenticationController : ControllerBase
             return BadRequest(ModelState);
 
         var result = await _authenticationService.RegisterUser(user);
+        
         if (!result.IsSuccess)
-            return BadRequest("Could not register user.");
+        {
+            var errorResponse = new
+            {
+                message = "Could not register user",
+                errors = result.errors
+            };
 
-        await GenerateAndWriteTokens(result.User);
-
+            return BadRequest(errorResponse);
+        }
+        
         return Ok();
     }
 
@@ -64,7 +75,7 @@ public class AuthenticationController : ControllerBase
         var user = await _authenticationService.GetUserByRefreshToken(refreshToken);
         if (user == null || user.ExpiresTime < DateTime.Now)
             return Unauthorized("Refresh Token has expired.");
-
+        
         await GenerateAndWriteTokens(user);
 
         return Ok();
