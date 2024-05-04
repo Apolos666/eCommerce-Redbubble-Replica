@@ -1,5 +1,6 @@
 <script setup>
 import LoginForm from "@/components/Auth/LoginForm.vue";
+import ExternalLogin from "@/components/Auth/ExternalLogin.vue";
 
 
 </script>
@@ -11,4 +12,5 @@ import LoginForm from "@/components/Auth/LoginForm.vue";
     <RouterLink :to="{ name: 'register' }" class="font-bold">Sign up</RouterLink>
   </div>
   <LoginForm />
+  <ExternalLogin />
 </template>

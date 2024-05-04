@@ -81,7 +81,7 @@ const onSubmit = handleSubmit(onSuccessSubmit, onErrorSubmit);
       By clicking Log in, you agree to our <a href="" class="font-bold">User Agreement</a>
     </div>
     <button
-        class="p-4 border-2 border-black m-4 text-white bg-pink-500 border-none rounded-full"
+        class="p-4 border-2 border-black font-medium m-4 text-white bg-pink-500 border-none rounded-full text-base"
         :disabled="isSubmitting"
     >
       {{ isSubmitting ? 'Logging in' : 'Log in'}}
