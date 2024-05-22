@@ -17,6 +17,20 @@ export default {
         }
     },
 
+    async externalLogin(provider)
+    {
+        try {
+            return await API().post("/authentication/external-login", null, {
+                params: {
+                    provider: provider,
+                    returnUrl: "/home"
+                }
+            })
+        } catch (error) {
+            console.log(error)
+        }
+    },
+
     async refreshToken() {
         try {
             return await API().get("/authentication/refreshtoken", {withCredentials: true});

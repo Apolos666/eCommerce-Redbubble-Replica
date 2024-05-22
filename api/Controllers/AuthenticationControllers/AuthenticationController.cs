@@ -6,6 +6,7 @@ using api.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.OpenApi.Validations.Rules;
 
 namespace api.Controllers.AuthenticationControllers;
 
@@ -45,6 +46,17 @@ public class AuthenticationController : ControllerBase
         return Ok();
     }
 
+    [HttpPost]
+    [AllowAnonymous]
+    [Route("external-login")]
+    public IActionResult ExternalLogin([FromQuery] string provider, [FromQuery] string returnUrl)
+    {
+        var redirectUrl = $"https://localhost:7175/api/authentication/external-login-callback?returnUrl={returnUrl}";
+        var properties = _signInManager.ConfigureExternalAuthenticationProperties(provider, returnUrl);
+        properties.AllowRefresh = true;
+        return Challenge(properties, provider);
+    }
+    
     [HttpPost("register")]
     public async Task<IActionResult> Register([FromBody] UserRegister user)
     {

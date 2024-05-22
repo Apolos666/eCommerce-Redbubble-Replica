@@ -1,7 +1,7 @@
 import axios from "axios";
 import router from "../router/router.js";
 
-export default (url='http://localhost:5258/api') => {
+export default (url='https://localhost:7175/api') => {
     const instance = axios.create({
         baseURL: url,
     })

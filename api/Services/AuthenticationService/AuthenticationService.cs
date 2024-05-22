@@ -87,7 +87,7 @@ public class AuthenticationService : IAuthenticationService
                 Expires = DateTime.Now.AddMinutes(60),
                 HttpOnly = true,
                 Secure = true,
-                SameSite = SameSiteMode.Strict,
+                SameSite = SameSiteMode.None,
                 IsEssential = true,
             });
     }
@@ -112,7 +112,7 @@ public class AuthenticationService : IAuthenticationService
                 Expires = refreshToken.Expires,
                 HttpOnly = true,
                 Secure = true,
-                SameSite = SameSiteMode.Strict,
+                SameSite = SameSiteMode.None,
                 IsEssential = true,
             });
         

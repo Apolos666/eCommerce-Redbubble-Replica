@@ -43,10 +43,15 @@ public static class SecurityService
             .AddEntityFrameworkStores<ApplicationDbContext>();
     }
 
-    public static IServiceCollection AddApplicationJwtAuthentication(this IServiceCollection service,
+    public static IServiceCollection AddApplicationAuthentication(this IServiceCollection service,
         JwtConfiguration jwtConfig, SecretClient secretClient)
     {
         var jwtKey = secretClient.GetSecret("JWTKey").Value.Value;
+
+        service.ConfigureApplicationCookie(options =>
+        {
+            options.Cookie.SameSite = SameSiteMode.None;
+        });
         
         service
             .AddAuthentication(options =>
@@ -78,6 +83,14 @@ public static class SecurityService
                         return Task.CompletedTask;
                     }
                 };
+            })
+            .AddGoogle(options =>
+            {
+                options.ClientId = secretClient.GetSecret("GoogleClientId").Value.Value;
+                options.ClientSecret = secretClient.GetSecret("GoogleClientSecret").Value.Value;
+                
+                options.Scope.Add("profile");
+                options.SignInScheme = Microsoft.AspNetCore.Identity.IdentityConstants.ExternalScheme;
             });
 
         return service;

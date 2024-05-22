@@ -20,7 +20,7 @@ builder.Services.AddApplicationServices();
 builder.Services.AddRequirementHandler();
 builder.Services.AddApplicationIdentity();
 // builder.Services.AddCookiePolicy();
-builder.Services.AddApplicationJwtAuthentication(jwtConfig, clientSecret);
+builder.Services.AddApplicationAuthentication(jwtConfig, clientSecret);
 builder.Services.AddApplicationAuthorization();
 var corsConfig = new CorsConfig("VuejsWebApp", "http://localhost:5173");
 builder.Services.AddCorsService(corsConfig);
